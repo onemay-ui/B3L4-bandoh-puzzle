@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1536">
+<title>Wake Up, Dracula!</title>
+<style>
+:root{
+  --ink:#0e1536;      /* midnight, page */
+  --plum:#19255c;     /* raised surfaces */
+  --plum2:#25367f;
+  --line:#4c5fb0;
+  --accent:#ffcf4a;   /* moonlight: primary action */
+  --accent-d:#d9a822;
+  --on:#1b1500;       /* text on accent */
+  --custard:#fff0b8;  /* receipt / result */
+  --ink2:#4a4f86;
+  --bone:#f6f4ff;
+  --muted:#b9c1ee;
+  --mint:#8fe3b0;
+  --berry:#ff7a8a;
+  --r:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{
+  background:var(--ink);
+  background-image:radial-gradient(900px 480px at 50% -140px,#2a3d9a 0,transparent 70%);
+  background-attachment:fixed;
+  color:var(--bone);
+  font-family:ui-rounded,"SF Pro Rounded","Hiragino Maru Gothic ProN","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:17px;line-height:1.5;min-height:100vh;min-height:100dvh;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+a{color:inherit}
+h1,h2,h3{margin:0;line-height:1.2}
+h1{font-size:1.55rem;letter-spacing:.01em}
+h3{font-size:1.05rem}
+p{margin:.4em 0}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--custard);outline-offset:2px}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top));background:rgba(14,21,54,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;font-weight:700}
+.timerwrap{position:relative}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;background:var(--plum);border:1px solid var(--line);border-radius:999px;padding:3px 12px}
+.timer.stopped{background:var(--custard);color:var(--ink);border-color:var(--custard)}
+.plus{position:absolute;right:6px;top:100%;margin-top:2px;font-weight:800;color:var(--berry);opacity:0;pointer-events:none}
+.plus.go{animation:plus 1.4s ease-out}
+@keyframes plus{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(12px)}}
+main{max-width:520px;margin:0 auto;padding:16px 16px 48px}
+
+/* surfaces */
+.card{background:var(--plum);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:14px 0}
+.card h3{margin-bottom:6px}
+.note{color:var(--muted);font-size:.92rem}
+.zh{color:var(--muted);font-size:.92rem}
+.back{display:inline-block;text-decoration:none;color:var(--muted);padding:6px 0;font-size:.95rem}
+.tag{display:inline-block;background:var(--ink);border-radius:8px;padding:1px 8px;font-size:.85rem;color:var(--custard);margin-top:4px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 18px;border-radius:12px;border:2px solid var(--line);background:var(--plum2);font-weight:700;cursor:pointer;text-decoration:none}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.btn.primary:active{background:var(--accent-d)}
+.btn.ghost{background:transparent}
+.btn.block{display:flex;width:100%}
+.btn[disabled]{opacity:.5;cursor:default}
+.spk{flex:none;width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--plum2);cursor:pointer;font-size:1.15rem;line-height:1;padding:0}
+.spk.speaking{background:var(--accent);border-color:var(--accent);animation:pulse .9s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:8px 0;font-size:.92rem}
+
+/* forms */
+input[type=text],input[type=number],input[type=tel],select{width:100%;min-height:48px;padding:8px 12px;border-radius:12px;border:2px solid var(--line);background:var(--ink);color:var(--bone)}
+select{appearance:auto}
+input::placeholder{color:#7f8ac4}
+.field{display:block;margin:10px 0}
+.field>span{display:block;font-size:.92rem;color:var(--muted);margin-bottom:4px}
+
+/* station header */
+.st-head{display:flex;gap:12px;align-items:center;margin:4px 0 10px}
+.st-emoji{font-size:2.4rem;line-height:1;flex:none}
+.st-head .kick{color:var(--custard);font-weight:700;font-size:.95rem}
+.story{border-left:4px solid var(--accent);padding:2px 0 2px 12px;margin:8px 0 4px}
+.zhbox{background:var(--plum);border:1px dashed var(--line);border-radius:12px;padding:8px 12px;margin:4px 0 8px;color:var(--muted)}
+
+/* snooze math (station 1) */
+.sleeper .who{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sleeper .who b{flex:1}
+.sleeper .who .e{font-size:1.7rem}
+.scratch{display:flex;align-items:center;gap:8px;margin:6px 0}
+.scratch input{max-width:96px;text-align:center}
+.scratch span{color:var(--muted)}
+.pay{display:flex;align-items:center;gap:8px;margin-top:8px}
+.pay span{font-weight:700;white-space:nowrap}
+.pay input{max-width:110px}
+.ok-card{border-color:var(--mint)!important}
+.bad-card{border-color:var(--berry)!important}
+
+/* picker cards (stations 3-5) */
+.bank{display:flex;flex-wrap:wrap;gap:6px}
+.bank span{background:var(--plum2);border-radius:999px;padding:3px 12px;font-weight:700}
+.boxes{display:grid;grid-template-columns:repeat(var(--n,5),1fr);gap:6px}
+.boxes div{background:var(--ink);border:2px dashed var(--line);border-radius:10px;text-align:center;padding:2px 0 4px;min-height:58px}
+.boxes small{display:block;color:var(--muted);font-size:.7rem}
+.boxes b{font-size:1.4rem}
+.boxes div.on{border-style:solid;border-color:var(--custard);background:var(--plum2)}
+.pick .got{margin-top:6px;font-size:1.2rem;font-weight:700;letter-spacing:.06em}
+.pick .got mark{background:var(--custard);color:var(--ink);border-radius:5px;padding:0 3px}
+
+/* sorter (station 6) */
+.legend{display:flex;gap:8px}
+.srow{margin:8px 0;padding:8px;border-radius:12px;border:2px solid transparent;background:var(--ink)}
+.srow.ok{border-color:var(--mint)}
+.srow.bad{border-color:var(--berry)}
+.srow .top2{display:flex;align-items:center;gap:8px}
+.srow .txt{flex:1;min-width:0}
+.gem{flex:none;min-width:46px;text-align:center;background:var(--plum2);border-radius:10px;padding:2px 6px;font-weight:700;font-variant-numeric:tabular-nums}
+.seg{display:flex;gap:4px;margin-top:8px}
+.seg button{flex:1;min-width:0;min-height:46px;padding:2px;border-radius:10px;border:2px solid var(--line);background:var(--plum);cursor:pointer;line-height:1.15;font-weight:700}
+.seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.srow .gem{visibility:hidden}
+.srow.show .gem{visibility:visible}
+
+/* word wand-like player (station 2) */
+.player{text-align:center}
+.bigplay{width:112px;height:112px;border-radius:50%;border:0;background:var(--accent);color:var(--on);font-size:2.6rem;cursor:pointer;box-shadow:0 6px 0 var(--accent-d)}
+.bigplay:active{transform:translateY(3px);box-shadow:0 3px 0 var(--accent-d)}
+.bigplay.speaking{animation:pulse .9s ease-in-out infinite}
+.dots{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:12px 0 6px}
+.dots button{min-height:44px;padding:0;border-radius:8px;border:2px solid var(--line);background:var(--ink);cursor:pointer;font-weight:700}
+.dots button.cur{border-color:var(--custard);background:var(--plum2)}
+.dots button.seen{background:var(--plum)}
+.navrow{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.navrow .btn{flex:1;white-space:nowrap;padding:10px 6px}
+.letters{letter-spacing:.35em;text-transform:uppercase;text-align:center;font-weight:800}
+
+/* messages & hints */
+.msg{margin:10px 0;padding:10px 12px;border-radius:12px;font-weight:600}
+.msg:empty{display:none}
+.msg.bad{background:rgba(255,122,138,.16);border:2px solid var(--berry)}
+.msg.info{background:var(--plum2);border:2px solid var(--line)}
+.hint{background:var(--ink);border:2px dashed var(--custard);border-radius:12px;padding:8px 12px;margin:8px 0}
+.hint table{border-collapse:collapse;width:100%;margin-top:4px}
+.hint td{padding:2px 6px;border-bottom:1px solid var(--line);font-size:.95rem}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* unlock result */
+.result{margin:14px 0;padding:16px;border-radius:var(--r);background:var(--custard);color:var(--ink);text-align:center}
+.result .big{font-size:3rem;font-weight:800;line-height:1.1;margin:2px 0}
+.result.pop{animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.result .note{color:var(--ink2)}
+
+/* home */
+.hero{text-align:center;padding:10px 0 2px}
+.hero .big{font-size:3.4rem;line-height:1}
+.locks{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:8px 0}
+.lock{background:var(--ink);border:2px dashed var(--line);border-radius:12px;text-align:center;padding:6px 0 8px}
+.lock small{display:block;color:var(--muted);font-size:.66rem}
+.lock b{font-size:1.3rem}
+.lock.on{border-style:solid;border-color:var(--custard);background:var(--plum2)}
+.slist{display:grid;gap:8px;margin:8px 0}
+.slist a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--plum);border:2px solid var(--line);text-decoration:none}
+.slist a.done{border-color:var(--mint)}
+.slist .e{font-size:1.7rem}
+.slist .t{flex:1;line-height:1.25}
+.slist .t small{display:block;color:var(--muted)}
+.slist .chk{font-weight:800;color:var(--mint);font-variant-numeric:tabular-nums}
+
+/* final */
+.chart{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;font-size:.78rem;text-align:center}
+.chart div{background:var(--ink);border-radius:6px;padding:2px 0;line-height:1.2}
+.chart b{display:block;font-size:.95rem}
+.lockin{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.lockin label{display:block;text-align:center;font-size:.72rem;color:var(--muted)}
+.lockin input{text-align:center;font-size:1.4rem;font-weight:800;text-transform:uppercase;padding:6px 0;min-width:0}
+.lockin input.bad{border-color:var(--berry)}
+.lockin input.ok{border-color:var(--mint)}
+
+/* receipt */
+.receipt{position:relative;background:var(--custard);color:var(--ink);padding:20px 18px 26px;margin:18px 0;font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Noto Sans TC",monospace;
+  -webkit-mask:radial-gradient(circle 8px at 50% 100%,transparent 98%,#000) bottom/16px 51% repeat-x,linear-gradient(#000,#000) top/100% 50% no-repeat;
+  mask:radial-gradient(circle 8px at 50% 100%,transparent 98%,#000) bottom/16px 51% repeat-x,linear-gradient(#000,#000) top/100% 50% no-repeat}
+.receipt h2{text-align:center;font-size:1.3rem;margin-bottom:2px}
+.receipt .c{text-align:center}
+.receipt hr{border:0;border-top:2px dashed rgba(14,21,54,.45);margin:10px 0}
+.receipt .row{display:flex;justify-content:space-between;gap:10px;font-size:.93rem;padding:1px 0}
+.receipt .row b{text-align:right}
+.receipt .name{font-size:1.5rem;font-weight:800;text-align:center;word-break:break-word}
+.receipt .spell{font-size:2rem;letter-spacing:.25em;text-align:center;font-weight:800;margin:4px 0 0 .25em}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:360px){
+  body{font-size:16px}
+  .lock b{font-size:1.1rem}
+  .lockin input{font-size:1.15rem}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#home"><span aria-hidden="true">🧛</span><span>Wake Up, Dracula!</span></a>
+  <div class="timerwrap"><div class="timer" id="timer" hidden>⏱ <span id="tm">00:00</span></div><span class="plus" id="plus" aria-live="polite"></span></div>
+</header>
+<main id="view"></main>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const pad=n=>String(n).padStart(2,'0');
+const ord=n=>({1:'1st',2:'2nd',3:'3rd'}[n]||n+'th');
+// the n-th letter of a word or phrase, spaces not counted
+const nth=(w,n)=>w.replace(/\s/g,'')[n-1].toUpperCase();
+function highlight(w,n){let k=0;return esc(w).split('').map(c=>{if(c===' ')return c;k++;return k===n?`<mark>${c}</mark>`:c;}).join('');}
+
+/* ---------- state (localStorage keeps the timer alive when a new QR code is scanned) ---------- */
+const KEY='b1l4-escape.v1';
+const PEN=10000; // each hint adds 10 seconds
+function fresh(){return {name:'',seat:'',grp:'',startTs:0,endTs:0,finalMs:0,done:{},hints:{}};}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));return s&&typeof s==='object'?Object.assign(fresh(),s):fresh();}catch(e){return fresh();}}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function sync(){S=load();}
+const hintsTotal=()=>Object.values(S.hints).reduce((a,b)=>a+b,0);
+const elapsed=()=>S.endTs?S.finalMs:(Date.now()-S.startTs+hintsTotal()*PEN);
+function fmt(ms){const s=Math.max(0,Math.floor(ms/1000));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+':'+pad(m):pad(m))+':'+pad(x);}
+function stamp(ts){const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());}
+
+function tick(){
+  const t=$('#timer');
+  if(!S.startTs){t.hidden=true;return;}
+  t.hidden=false;
+  $('#tm').textContent=fmt(elapsed());
+  t.classList.toggle('stopped',!!S.endTs);
+}
+setInterval(tick,1000);
+window.addEventListener('storage',e=>{if(e.key===KEY){sync();tick();}});
+function flashPlus(){const p=$('#plus');p.textContent='+'+(PEN/1000)+'s';p.classList.remove('go');void p.offsetWidth;p.classList.add('go');}
+
+/* ---------- speech (the phone reads aloud) ---------- */
+const TTS=(function(){
+  const ok='speechSynthesis' in window&&'SpeechSynthesisUtterance' in window;
+  let voice=null,token=0,activeBtn=null;
+  function pick(){
+    if(!ok)return;
+    const vs=speechSynthesis.getVoices()||[];
+    voice=vs.find(v=>/^en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null;
+  }
+  if(ok){pick();try{speechSynthesis.addEventListener('voiceschanged',pick);}catch(e){}}
+  function clearBtn(){if(activeBtn){activeBtn.classList.remove('speaking');activeBtn=null;}}
+  function stop(){token++;clearBtn();if(ok){try{speechSynthesis.cancel();}catch(e){}}}
+  function say(text,rate){
+    return new Promise(res=>{
+      if(!ok){res(false);return;}
+      const my=token;let done=false,t;
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang='en-US';if(voice)u.voice=voice;u.rate=rate||0.85;
+      const fin=()=>{if(done)return;done=true;clearTimeout(t);res(my===token);};
+      u.onend=fin;u.onerror=fin;
+      t=setTimeout(fin,3000+text.length*120); // safety net if a phone never fires onend
+      try{speechSynthesis.speak(u);}catch(e){fin();}
+    });
+  }
+  async function play(items,opts){
+    opts=opts||{};
+    stop();
+    const my=token;
+    if(opts.btn){activeBtn=opts.btn;opts.btn.classList.add('speaking');}
+    for(let i=0;i<items.length;i++){
+      if(my!==token)return;
+      await say(items[i],opts.rate);
+      if(my!==token)return;
+      if(i<items.length-1)await sleep(opts.gap||700);
+    }
+    if(my===token)clearBtn();
+  }
+  return {ok,stop,play};
+})();
+function noVoice(){setMsg('This phone cannot read aloud. Ask your teacher. 這支手機無法朗讀，請問老師。','info');}
+// any button with data-say reads its text aloud once; tapping it again stops it
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-say]');
+  if(!b)return;
+  if(b.classList.contains('speaking')){TTS.stop();return;}
+  if(!TTS.ok){noVoice();return;}
+  TTS.play([b.dataset.say],{btn:b});
+});
+
+/* ---------- content ---------- */
+const STATIONS=[
+  {id:1,key:'s1',emoji:'⏰',title:'Snooze Math',zh:'貪睡數學（聽力＋時間）'},
+  {id:2,key:'s2',emoji:'📖',title:'Spell Book',zh:'拼字咒語（紙本聽寫）'},
+  {id:3,key:'s3',emoji:'🔐',title:'Phrase Lock',zh:'片語鎖'},
+  {id:4,key:'s4',emoji:'👻',title:'Who Am I?',zh:'定義謎語'},
+  {id:5,key:'s5',emoji:'🧪',title:'Word Family Cauldron',zh:'字族鍋（詞性）'},
+  {id:6,key:'s6',emoji:'🕰️',title:'Tocky or Ramos?',zh:'閱讀理解'}
+];
+const SECRET='WAKEUP';
+
+/* ---------- shared UI pieces ---------- */
+function frame(st,intro,zh,body){
+  return `<a class="back" href="#home">← Menu 選單</a>
+  <div class="st-head"><div class="st-emoji" aria-hidden="true">${st.emoji}</div>
+    <div><div class="kick">Station ${st.id}</div><h1>${esc(st.title)}</h1><div class="zh">${esc(st.zh)}</div></div></div>
+  <div class="story">${intro}</div>
+  <button class="linkbtn" id="zhbtn" type="button" aria-expanded="false">🇹🇼 中文說明（免費）</button>
+  <div class="zhbox" id="zhbox" hidden>${zh}</div>
+  <div id="result"></div>
+  ${body}
+  <div class="msg" id="msg" role="status"></div>
+  <div id="hintbox"></div>
+  <button class="btn ghost block" id="hintbtn" type="button"></button>`;
+}
+let redrawHints=()=>{};
+function wireCommon(key,list){
+  const zb=$('#zhbtn'),zx=$('#zhbox');
+  if(zb&&zx)zb.onclick=()=>{zx.hidden=!zx.hidden;zb.setAttribute('aria-expanded',String(!zx.hidden));};
+  const box=$('#hintbox'),btn=$('#hintbtn');
+  const draw=()=>{
+    const n=Math.min(S.hints[key]||0,list.length);
+    box.innerHTML=list.slice(0,n).map((t,i)=>`<div class="hint"><b>💡 ${i+1}.</b> ${t}</div>`).join('');
+    const closed=!!S.endTs||(key!=='final'&&!!S.done[key]);
+    if(closed){btn.textContent='✔ Done 已完成';btn.disabled=true;}
+    else if(n>=list.length){btn.textContent='💡 No more hints 沒有更多提示';btn.disabled=true;}
+    else{btn.textContent='💡 Open a hint 看提示 ('+n+'/'+list.length+')  +'+(PEN/1000)+' sec';btn.disabled=false;}
+  };
+  btn.onclick=()=>{sync();S.hints[key]=(S.hints[key]||0)+1;save();tick();flashPlus();draw();};
+  redrawHints=draw;
+  draw();
+}
+function setMsg(text,kind){const m=$('#msg');if(!m)return;m.className='msg '+(kind||'bad');m.textContent=text;}
+function clearMsg(){const m=$('#msg');if(!m)return;m.className='msg';m.textContent='';}
+function shake(el){if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}
+function onEnter(input,fn){input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();fn();}});}
+
+function resultHTML(st,sym,line,isNew){
+  const isNum=/^\d+$/.test(sym);
+  return `<div class="result${isNew?' pop':''}"><div>🔓 Lock ${st.id} is open!</div>
+    <div class="big">${esc(sym)}</div><div>${line}</div>
+    <div class="note">${isNum?'Remember this number. Turn it into a letter at the end. 記住這個數字，最後要換成字母。':'Remember this letter for the final lock. 記住這個字母。'}</div></div>`;
+}
+function finishStation(st,sym,line){
+  sync();
+  const first=!S.done[st.key];
+  if(first){S.done[st.key]={t:elapsed(),sym};save();tick();}
+  $('#result').innerHTML=resultHTML(st,sym,line,first);
+  clearMsg();redrawHints();
+  if(first)$('#result').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function showIfDone(st,line){
+  if(S.done[st.key])$('#result').innerHTML=resultHTML(st,S.done[st.key].sym,line,false);
+}
+
+/* ---------- start / home ---------- */
+let pendingRoute='home';
+function renderStart(target){
+  pendingRoute=target||'home';
+  const waiting=pendingRoute!=='home'?`<div class="msg info">Your station is waiting. Enter your name first. 先輸入姓名再開始。</div>`:'';
+  $('#view').innerHTML=`
+  <div class="hero"><div class="big" aria-hidden="true">🧛</div><h1>Wake Up, Dracula!</h1></div>
+  <div class="story"><p>It is Halloween night. The party starts at midnight. But Dracula is still sleeping!</p>
+    <p>Solve 6 stations. Get 6 magic symbols. Say the spell. Wake him up on time!</p>
+    <p class="zh">萬聖夜的派對午夜開始，但 Dracula 還在睡！完成 6 個關卡，拿到 6 個魔法符號，說出咒語，準時把他叫醒。</p></div>
+  ${waiting}
+  <div class="card">
+    <label class="field"><span>Name 姓名</span><input type="text" id="nm" maxlength="20" autocomplete="off" placeholder="Your name"></label>
+    <label class="field"><span>Seat number 座號（optional）</span><input type="tel" id="seat" maxlength="6" autocomplete="off" placeholder="e.g. 12"></label>
+    <label class="field"><span>Group 組別（optional）</span><select id="grp"><option value="">—</option>${[1,2,3,4,5,6].map(n=>`<option value="${n}">Group ${n}</option>`).join('')}</select></label>
+    <button class="btn primary block" id="go" type="button">Start the timer 開始計時</button>
+    <div class="msg" id="msg" role="status"></div>
+  </div>
+  <div class="card"><h3>🎧 Sound check 音量測試</h3>
+    <p class="note">Station 1 and Station 2 play sound. Use earphones. Turn the volume up. 第 1、2 站會播放聲音，請戴耳機並調高音量。</p>
+    <button class="btn block" id="test" type="button" data-say="Hello! Happy Halloween! Wake up, Dracula!">🔊 Test sound 測試聲音</button></div>
+  <div class="card"><h3>💡 Hints 提示</h3>
+    <p class="note">Each station has 3 hints. Each hint adds ${PEN/1000} seconds to your time. Try first! 每站最多 3 次提示，每次加 ${PEN/1000} 秒，先自己試試！</p></div>`;
+  const go=()=>{
+    const name=$('#nm').value.trim();
+    if(!name){setMsg('Please write your name. 請輸入姓名。');shake($('#nm'));$('#nm').focus();return;}
+    S=fresh();S.name=name;S.seat=$('#seat').value.trim();S.grp=$('#grp').value;S.startTs=Date.now();save();tick();
+    if(location.hash.slice(1)===pendingRoute)route();else location.hash=pendingRoute;
+  };
+  $('#go').onclick=go;onEnter($('#nm'),go);onEnter($('#seat'),go);
+}
+function renderHome(){
+  const lockTiles=STATIONS.map(st=>{const d=S.done[st.key];return `<div class="lock${d?' on':''}"><small>Lock ${st.id}</small><b>${d?esc(d.sym):'?'}</b></div>`;}).join('');
+  const list=STATIONS.map(st=>{const d=S.done[st.key];return `<a class="${d?'done':''}" href="#${st.key}"><span class="e" aria-hidden="true">${st.emoji}</span>
+    <span class="t"><b>Station ${st.id}: ${esc(st.title)}</b><small>${esc(st.zh)}</small></span><span class="chk">${d?'✔ '+fmt(d.t):''}</span></a>`;}).join('');
+  const n=Object.keys(S.done).length;
+  $('#view').innerHTML=`
+  <div class="hero"><h1>Hello, ${esc(S.name)}!</h1>
+    <p class="note">${S.endTs?'You woke Dracula up! 🎉 Open the final lock to see your receipt.':'Scan the QR code at each station, or tap one below. 掃描各站 QR code，或直接點選。'}</p></div>
+  <div class="card"><h3>Your spell book 魔法符號</h3><div class="locks">${lockTiles}</div>
+    <p class="note">Lock 1 and Lock 6 give numbers. Lock 2 to 5 give letters. 第 1、6 站是數字，第 2～5 站是字母。</p></div>
+  <div class="slist">${list}
+    <a href="#final" class="${S.endTs?'done':''}"><span class="e" aria-hidden="true">🪄</span><span class="t"><b>The Final Lock</b><small>咒語（${n}/6 stations done）</small></span><span class="chk">${S.endTs?'✔':''}</span></a></div>
+  <div style="text-align:center"><button class="linkbtn" id="reset" type="button">Not you? Start over 重新開始</button></div>`;
+  $('#reset').onclick=()=>{if(confirm('Start over? Your name, time and symbols will be deleted.\n重新開始？姓名、時間和符號都會清除。')){S=fresh();save();tick();route();}};
+}
+
+/* ---------- Station 1: Snooze Math (listening + time) ---------- */
+function renderS1(st){
+  const R=[
+    {emoji:'🧛',name:'Dracula',say:"Dracula's alarm goes off at six thirty. He wakes up at six forty-two.",ans:12},
+    {emoji:'🤕',name:'The mummy',say:"The mummy's alarm goes off at seven o'clock. She wakes up at seven oh six.",ans:6},
+    {emoji:'🧟',name:'The zombie',say:"The zombie's alarm goes off at five forty-five. He wakes up at five fifty.",ans:5},
+    {emoji:'👻',name:'The ghost',say:"The ghost's alarm goes off at eight o'clock. He wakes up at eight o'clock.",ans:0}
+  ];
+  const TOTAL=R.reduce((a,r)=>a+r.ans,0);
+  const body=`
+  <div class="card"><button class="btn primary block" id="playall" type="button">▶ Play all 4 播放全部</button>
+    <p class="note">Each one is read two times. 每一段唸兩次。</p></div>
+  ${R.map((r,i)=>`<div class="card sleeper" data-i="${i}"><div class="who"><span class="e" aria-hidden="true">${r.emoji}</span><b>${esc(r.name)}</b>
+      <button class="spk" type="button" data-play="${i}" aria-label="Listen to ${esc(r.name)}">🔊</button></div>
+    <div class="scratch"><span>Notes 筆記</span><input type="text" aria-label="Alarm time note" placeholder="__:__"><span>→</span><input type="text" aria-label="Wake-up time note" placeholder="__:__"></div>
+    <div class="pay"><span>Minutes late 睡過頭</span><input type="number" inputmode="numeric" min="0" max="99" aria-label="Minutes late"></div></div>`).join('')}
+  <div class="card" id="totalcard"><h3>All 4 together 全部加起來</h3>
+    <div class="pay"><span>Total minutes</span><input type="number" inputmode="numeric" min="0" max="99" id="total" aria-label="Total minutes"></div></div>
+  <button class="btn primary block" id="check" type="button">Check my answers ✔</button>`;
+  $('#view').innerHTML=frame(st,
+    `<p>Dracula's friends oversleep too! Listen. How many minutes late is each one?</p><p class="zh">聽四段話，算出每個人睡過頭幾分鐘。</p>`,
+    `聽四段話。每段話有兩個時間：<b>鬧鐘響的時間</b>和<b>醒來的時間</b>。用「醒來時間 − 鬧鐘時間」算出每個人睡過頭幾分鐘，鬼魂準時醒來就是 0。最後把四個人的分鐘加起來。可以先把時間寫在筆記格或紙上。`,body);
+  $$('[data-play]').forEach(b=>b.onclick=()=>{
+    if(b.classList.contains('speaking')){TTS.stop();return;}
+    if(!TTS.ok){noVoice();return;}
+    const s=R[+b.dataset.play].say;TTS.play([s,s],{btn:b,gap:1300,rate:0.8});
+  });
+  $('#playall').onclick=e=>{
+    const b=e.currentTarget;
+    if(b.classList.contains('speaking')){TTS.stop();return;}
+    if(!TTS.ok){noVoice();return;}
+    const items=[];R.forEach(r=>{items.push(r.say,r.say);});
+    TTS.play(items,{btn:b,gap:1300,rate:0.8});
+  };
+  const inputs=$$('.sleeper .pay input'),totalIn=$('#total');
+  const check=()=>{
+    let wrong=[],empty=0;
+    inputs.forEach((inp,i)=>{
+      const card=inp.closest('.sleeper');card.classList.remove('ok-card','bad-card');
+      const raw=inp.value.replace(/[^\d]/g,'');
+      if(raw===''){empty++;return;}
+      if(parseInt(raw,10)===R[i].ans)card.classList.add('ok-card');else{card.classList.add('bad-card');wrong.push(R[i].name);}
+    });
+    const tc=$('#totalcard');tc.classList.remove('ok-card','bad-card');
+    const tr=totalIn.value.replace(/[^\d]/g,'');
+    if(empty||tr===''){setMsg('Fill in all 5 boxes. 請填滿 5 個格子。','bad');return;}
+    if(wrong.length){setMsg('Listen again: '+wrong.join(', ')+'. Wake-up time minus alarm time. 再聽一次：醒來時間減鬧鐘時間。');shake($('.bad-card'));return;}
+    if(parseInt(tr,10)!==TOTAL){tc.classList.add('bad-card');setMsg('Each minutes box is right. Check your total. 每個人都對了，檢查一下總和。');shake(tc);return;}
+    tc.classList.add('ok-card');
+    finishStation(st,String(TOTAL),'Total minutes: the magic number for Lock 1');
+  };
+  $('#check').onclick=check;onEnter(totalIn,check);
+  showIfDone(st,'Total minutes: the magic number for Lock 1');
+  wireCommon('s1',[
+    'Each sentence has two times: when the alarm goes off, and when the person wakes up. 每句有兩個時間：鬧鐘響的時間、醒來的時間。',
+    'Write the 8 times first. Then do: wake-up time − alarm time = minutes late. 先寫下 8 個時間，再用「醒來時間 − 鬧鐘時間」。',
+    `Here are the times. 時間如下：<table><tr><td>Dracula</td><td>6:30 → 6:42</td><td>12 min</td></tr><tr><td>Mummy</td><td>7:00 → 7:06</td><td>?</td></tr><tr><td>Zombie</td><td>5:45 → 5:50</td><td>?</td></tr><tr><td>Ghost</td><td>8:00 → 8:00</td><td>?</td></tr></table>`
+  ]);
+}
+
+/* ---------- Station 2: Spell Book (listen, write on PAPER) ---------- */
+function renderS2(st){
+  const W=[
+    ['straight',"Let's go straight home."],['chase','You have to chase the clock.'],['amazing','The food is amazing.'],
+    ['research','Do some research first.'],['encounter','We encounter a problem.'],['design','Please design a card.']
+  ];
+  const SENT='SCARED';
+  let cur=0;const seen=new Set();
+  $('#view').innerHTML=frame(st,
+    `<p>Open the spell book. Listen to 6 words. <b>Write each word on your paper.</b> Then take the <b>first letter</b> of every word.</p><p class="zh">聽 6 個單字，把每個字寫在紙上，再取每個字的第一個字母。</p>`,
+    `手機會唸單字兩次，再唸一句例句。請把<b>整個單字寫在紙本聽寫單</b>上，再把 6 個單字的<b>第一個字母</b>依序輸入，會得到一個秘密單字。`,`
+  <div class="card player"><h3 id="wn">Word 1 of 6</h3>
+    <p class="note">The word is read twice, then a sentence. 唸兩次單字，再唸一句例句。</p>
+    <button class="bigplay" id="play" type="button" aria-label="Play the word">▶</button>
+    <div class="navrow"><button class="btn" id="prev" type="button">◀ Back</button><button class="btn" id="again" type="button">↻ Again</button><button class="btn" id="next" type="button">Next ▶</button></div>
+    <div class="dots" id="dots">${W.map((_,i)=>`<button type="button" data-i="${i}" aria-label="Word ${i+1}">${i+1}</button>`).join('')}</div></div>
+  <div class="card"><h3>Your 6 first letters 6 個第一個字母</h3>
+    <p class="note">Write them in order, word 1 to word 6. 依序輸入。</p>
+    <input type="text" id="ans" maxlength="12" class="letters" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="First letters" placeholder="______">
+    <button class="btn primary block" id="check" type="button" style="margin-top:10px">Check my letters ✔</button></div>`);
+  function paint(){
+    $('#wn').textContent='Word '+(cur+1)+' of 6';
+    $$('#dots button').forEach((b,i)=>{b.classList.toggle('cur',i===cur);b.classList.toggle('seen',seen.has(i)&&i!==cur);});
+  }
+  function playCur(){
+    if(!TTS.ok){noVoice();return;}
+    seen.add(cur);paint();
+    TTS.play([W[cur][0],W[cur][0],W[cur][1]],{btn:$('#play'),gap:1300,rate:0.8});
+  }
+  $('#play').onclick=()=>{if($('#play').classList.contains('speaking')){TTS.stop();return;}playCur();};
+  $('#again').onclick=playCur;
+  $('#next').onclick=()=>{cur=Math.min(W.length-1,cur+1);playCur();};
+  $('#prev').onclick=()=>{cur=Math.max(0,cur-1);playCur();};
+  $('#dots').onclick=e=>{const b=e.target.closest('button[data-i]');if(!b)return;cur=+b.dataset.i;playCur();};
+  paint();
+  const check=()=>{
+    const v=$('#ans').value.replace(/[^a-z]/gi,'').toUpperCase();
+    if(!v){setMsg('Write your 6 letters. 請輸入 6 個字母。');return;}
+    if(v.length!==6){setMsg('You need 6 letters, one for each word. You wrote '+v.length+'. 需要 6 個字母。');shake($('#ans'));return;}
+    const wrong=[];for(let i=0;i<6;i++)if(v[i]!==SENT[i])wrong.push(i+1);
+    if(wrong.length){setMsg('Check word '+wrong.join(', ')+'. Listen again and check the spelling on your paper. 再聽一次，檢查紙上的拼字。');shake($('#ans'));return;}
+    finishStation(st,'A','SCARED: the 3rd letter is the magic letter for Lock 2');
+  };
+  $('#check').onclick=check;onEnter($('#ans'),check);
+  showIfDone(st,'SCARED: the 3rd letter is the magic letter for Lock 2');
+  wireCommon('s2',[
+    'Play the word again. Clap the parts: re-search, en-coun-ter, a-maz-ing. 重播並拍手分音節：re-search、en-coun-ter、a-maz-ing。',
+    'Number of letters 字母數：1 straight (8)、2 chase (5)、3 amazing (7)、4 research (8)、5 encounter (9)、6 design (6)。',
+    'The secret word has 6 letters. It starts with SC. It is how you feel in a haunted house! 秘密單字有 6 個字母，開頭是 SC，是在鬼屋裡的感覺！'
+  ]);
+}
+
+/* ---------- generic "pick the answer, take a letter" station (3, 4, 5) ---------- */
+function renderPicker(st,cfg){
+  const cards=cfg.items.map((it,i)=>`<div class="card pick" data-i="${i}"><h3>${cfg.itemWord} ${i+1}</h3><p>${it.q}</p>
+    <span class="tag">${it.pos?'Take the '+ord(it.pos)+' letter → Box '+it.box:'Bonus: no letter 這題不用取字母'}</span>
+    <label class="field"><span>My answer 我的答案</span><select aria-label="Answer ${i+1}"><option value="">— choose 選擇 —</option>${it.opts.map(w=>`<option value="${esc(w)}">${esc(w)}</option>`).join('')}</select></label>
+    <div class="got" hidden></div></div>`).join('');
+  const bank=cfg.bank?`<div class="card"><h3>${cfg.bankTitle}</h3><div class="bank">${cfg.bank.map(w=>`<span>${esc(w)}</span>`).join('')}</div><p class="note">${cfg.bankNote}</p></div>`:'';
+  const boxes=Array.from({length:cfg.boxN},(_,k)=>`<div data-b="${k+1}"><small>Box ${k+1}</small><b>&nbsp;</b></div>`).join('');
+  $('#view').innerHTML=frame(st,cfg.intro,cfg.zh,`${bank}
+  <div class="card"><h3>Secret boxes 秘密格子</h3><div class="boxes" id="boxes" style="--n:${cfg.boxN}">${boxes}</div></div>
+  ${cards}
+  <div class="card"><h3>The secret word 秘密單字</h3><p>Read Box 1 to Box ${cfg.boxN}. Write the word. 依序讀出格子裡的字母。</p>
+    <input type="text" id="secret" maxlength="12" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Secret word" placeholder="${'_'.repeat(cfg.boxN)}">
+    <button class="btn primary block" id="check" type="button" style="margin-top:10px">Check the secret word ✔</button></div>`);
+  const boxLetters={};
+  $$('.pick').forEach(card=>{
+    const i=+card.dataset.i,it=cfg.items[i],sel=card.querySelector('select'),got=card.querySelector('.got');
+    sel.onchange=()=>{
+      card.classList.remove('ok-card','bad-card');got.hidden=true;
+      if(it.box){delete boxLetters[it.box];const bx=$(`#boxes [data-b="${it.box}"]`);bx.classList.remove('on');bx.querySelector('b').innerHTML='&nbsp;';}
+      if(!sel.value){clearMsg();return;}
+      if(sel.value!==it.ans){card.classList.add('bad-card');setMsg(cfg.itemWord+' '+(i+1)+' is not “'+sel.value+'”. '+cfg.wrongTip);shake(card);return;}
+      card.classList.add('ok-card');clearMsg();got.hidden=false;
+      if(it.pos){
+        const L=nth(it.ans,it.pos);boxLetters[it.box]=L;
+        const bx=$(`#boxes [data-b="${it.box}"]`);bx.classList.add('on');bx.querySelector('b').textContent=L;
+        got.innerHTML=highlight(it.ans,it.pos)+' → Box '+it.box;
+      }else got.textContent=it.ans+' ✔';
+    };
+  });
+  const check=()=>{
+    const v=$('#secret').value.replace(/[^a-z]/gi,'').toUpperCase();
+    if(!v){setMsg('Write the secret word. 請輸入秘密單字。');return;}
+    if(Object.keys(boxLetters).length<cfg.boxN){setMsg('Some boxes are empty. Choose the right answers first. 還有格子是空的。');shake($('#boxes'));return;}
+    if(v!==cfg.secret){setMsg('Not yet. Read Box 1 to Box '+cfg.boxN+' in order. 依序讀出格子。');shake($('#secret'));return;}
+    finishStation(st,cfg.sym,cfg.line);
+  };
+  $('#check').onclick=check;onEnter($('#secret'),check);
+  showIfDone(st,cfg.line);
+  wireCommon(st.key,cfg.hints);
+}
+
+/* ---------- Station 3: Phrase Lock ---------- */
+function renderS3(st){
+  const P=['get out of','go off','in advance','in order to','on time','take action','wake up'];
+  const it=(q,ans,pos,box)=>({q,ans,pos,box,opts:P});
+  renderPicker(st,{
+    itemWord:'Sentence',intro:`<p>The Phrase Lock has 7 sentences. Put the right phrase in each one.</p><p class="zh">每句話填入正確的片語。</p>`,
+    zh:`每句話選一個片語填入，<b>每個片語只用一次</b>。答對後，照標示取出指定位置的字母放進格子（空格不算），讀出秘密單字。`,
+    bank:P,bankTitle:'Phrase bank 片語庫',bankNote:'Each phrase is used once. 每個片語只用一次。',
+    items:[
+      it('Dracula sleeps all day. He must ______ before the party at midnight.','wake up',1,1),
+      it('Tocky is a magic clock. It will ______ at six o\'clock.','go off',2,2),
+      it('The witch flew very fast ______ get to the party.','in order to',4,3),
+      it('A ghost is in the kitchen! We must ______ now.','take action',3,4),
+      it('The party is very popular. Buy tickets ______.','in advance',1,5),
+      it('The zombie came to class ______. He was not late.','on time',2,6),
+      it('It is too scary in here. Let\'s ______ the haunted house!','get out of',1,7)
+    ],
+    boxN:7,secret:'WORKING',sym:'K',line:'WORKING: the 4th letter is the magic letter for Lock 3',
+    wrongTip:'Think about the meaning. 想想意思。',
+    hints:[
+      '<b>Meanings 意思：</b>get out of 離開｜go off 響（鬧鐘）｜in advance 事先｜in order to 為了｜on time 準時｜take action 採取行動｜wake up 醒來',
+      'Start with the easiest sentence (Sentence 6: not late). Cross out the phrases you already used. 先做最簡單的第 6 句（沒遲到），用過的片語劃掉。',
+      'Answers 答案：Sentence 1 = wake up、Sentence 4 = take action、Sentence 6 = on time。The secret word is something you do at a job: W _ R K _ _ G. 秘密單字是工作時做的事：W _ R K _ _ G。'
+    ]
+  });
+}
+
+/* ---------- Station 4: Who Am I? ---------- */
+function renderS4(st){
+  const B=['alarm','amazing','design','encounter','invent','oversleep','particular','position','promise','regular','research'];
+  const it=(q,ans,pos,box)=>({q,ans,pos,box,opts:B});
+  renderPicker(st,{
+    itemWord:'Riddle',intro:`<p>The ghost library asks 9 riddles. Choose the right word for each one.</p><p class="zh">幽靈圖書館有 9 個謎語，選出正確的單字。</p>`,
+    zh:`讀英文謎語，從單字庫選出答案（有 2 個單字用不到）。有標示的謎語，取指定位置的字母放進格子，讀出秘密單字。`,
+    bank:B,bankTitle:'Word bank 單字庫',bankNote:'2 words are not used. 有 2 個字用不到。',
+    items:[
+      it('A clock that wakes people up by making loud sounds.','alarm',2,3),
+      it('To sleep longer than you planned to.','oversleep',1,2),
+      it('The act of studying to learn more facts about something.','research',2,5),
+      it('To make a totally new thing.','invent',3,4),
+      it('To put something in a certain place.','position',3,1),
+      it('Common, not special. “Jessica likes ______ cow’s milk.”','regular',0,0),
+      it('To tell someone you will certainly do something. “John ______ he would finish the job.”','promise',0,0),
+      it('This one, not any other. “My mother likes this ______ shampoo.”','particular',0,0),
+      it('Very surprising or impressive. “The food is ______.”','amazing',0,0)
+    ].map(x=>x.pos?x:{q:x.q,ans:x.ans,opts:x.opts}),
+    boxN:5,secret:'SOLVE',sym:'E',line:'SOLVE: the last letter is the magic letter for Lock 4',
+    wrongTip:'Read the riddle again. 再讀一次。',
+    hints:[
+      '<b>Meanings 意思：</b>alarm 鬧鐘｜amazing 令人驚奇的｜design 設計｜encounter 遭遇｜invent 發明｜oversleep 睡過頭｜particular 特定的｜position 擺放｜promise 承諾｜regular 一般的｜research 研究',
+      'First letters 第一個字母：1 a…、2 o…、3 r…、4 i…、5 p…、6 r…、7 p…、8 p…、9 a…',
+      'Boxes 1 to 5 make a word. It means “fix a problem”: S _ L _ E. 5 個格子組成的字意思是「解決問題」：S _ L _ E。'
+    ]
+  });
+}
+
+/* ---------- Station 5: Word Family Cauldron ---------- */
+function renderS5(st){
+  renderPicker(st,{
+    itemWord:'Sentence',intro:`<p>Stir the cauldron! Choose the right word form for each sentence.</p><p class="zh">選出正確的詞性（名詞、動詞、形容詞）。</p>`,
+    zh:`每句選出<b>形式正確</b>的字（名詞、動詞或形容詞）。有標示的取指定位置的字母放進格子，讀出秘密單字。`,
+    items:[
+      {q:'We need a ______ to this problem.',ans:'solution',pos:4,box:1,opts:['solve','solution']},
+      {q:'The ______ of Tocky always overslept.',ans:'inventor',pos:2,box:2,opts:['inventor','invent']},
+      {q:'Dracula is very ______. He makes a new costume every day.',ans:'creative',pos:6,box:3,opts:['create','creative']},
+      {q:'Can you ______ a better clock?',ans:'invent',pos:6,box:4,opts:['inventor','invent']},
+      {q:'Can you ______ the problem?',ans:'solve',pos:5,box:5,opts:['solution','solve']},
+      {q:'Tocky is not a ______ clock. It runs away!',ans:'regular',opts:['irregular','regular']}
+    ],
+    boxN:5,secret:'UNITE',sym:'U',line:'UNITE: the 1st letter is the magic letter for Lock 5',
+    wrongTip:'Check the word before the blank. 看看空格前面的字。',
+    hints:[
+      '<b>Rules 規則：</b>a / the / my + noun 名詞｜to / can + verb 動詞｜is / very + adjective 形容詞',
+      '<b>Meanings 意思：</b>solve 解決（動詞）｜solution 解決辦法（名詞）｜invent 發明（動詞）｜inventor 發明者（名詞）｜create 創造（動詞）｜creative 有創造力的（形容詞）｜regular 一般的（形容詞）',
+      'Answers 答案：Sentence 1 = solution、Sentence 2 = inventor。The secret word means “put together”: U _ _ _ _. 秘密單字的意思是「團結在一起」：U _ _ _ _。'
+    ]
+  });
+}
+
+/* ---------- Station 6: Tocky or Ramos? ---------- */
+function renderS6(st){
+  const S6=[
+    ['It has three parts: a clock, a beacon, and an app.','R',3],['It is ball-shaped.','T',2],['You have to get out of bed.','B',1],
+    ['It jumps off the table.','T',3],['You position the beacon far from your bedroom.','R',4],['It makes a lot of noise and runs around.','T',1],
+    ['You hold your phone near the beacon to stop the alarm.','R',2],['Its inventor always overslept.','B',4],['You have to chase it.','T',2],
+    ['You can set a code in advance.','R',5],['It promises you will get up on time.','T',2],['It was designed to wake you up in a different way.','R',2]
+  ].map(x=>({t:x[0],k:x[1],g:x[2]}));
+  const SUM=S6.filter(x=>x.k==='R').reduce((a,x)=>a+x.g,0);
+  const rows=S6.map((x,i)=>`<div class="srow" data-i="${i}"><div class="top2">
+      <button class="spk" type="button" data-say="${esc(x.t)}" aria-label="Listen to sentence ${i+1}">🔊</button>
+      <span class="txt"><b>${i+1}.</b> ${esc(x.t)}</span><span class="gem">💎 ${x.g}</span></div>
+    <div class="seg" role="group" aria-label="Who is sentence ${i+1} about?">
+      <button type="button" data-v="T" aria-pressed="false">🏃 Tocky</button>
+      <button type="button" data-v="R" aria-pressed="false">📡 Ramos</button>
+      <button type="button" data-v="B" aria-pressed="false">⚖️ Both</button></div></div>`).join('');
+  $('#view').innerHTML=frame(st,
+    `<p>Two clocks are in the haunted house! Read the sentences. Which clock is it?</p><p class="zh">讀句子，判斷是哪一個鬧鐘。</p>`,
+    `判斷每句話說的是 <b>Tocky</b>、<b>Ramos</b>，還是<b>兩個都是（Both）</b>。全部分對後，只把 <b>Ramos 專屬</b>句子旁的寶石數字加起來。Both 的句子不算。`,`
+  <div class="card"><h3>Two clocks 兩個鬧鐘</h3>
+    <p>🏃 <b>Tocky</b>: the clock that runs away.</p><p>📡 <b>Ramos</b>: the clock with a beacon and a code.</p>
+    <p class="note">Tap 🔊 to listen to a sentence. 點 🔊 聽句子。</p></div>
+  <div class="card" id="sortcard"><h3>Read and sort 閱讀並分類</h3><div id="rows">${rows}</div>
+    <button class="btn primary block" id="check" type="button">Check my groups ✔</button></div>
+  <div class="card" id="sumcard" hidden><h3>Add the gems 💎</h3>
+    <p>Add the gems of the 📡 <b>Ramos</b> sentences only. 只把 📡 Ramos 專屬句子的寶石加起來。</p>
+    <div class="pay"><span>Total 💎</span><input type="number" inputmode="numeric" min="0" max="99" id="sum" aria-label="Total gems"></div>
+    <button class="btn primary block" id="sumcheck" type="button" style="margin-top:10px">Check the total ✔</button></div>`);
+  const pick={};
+  $$('.srow').forEach(r=>{
+    r.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{
+      pick[r.dataset.i]=b.dataset.v;
+      r.querySelectorAll('.seg button').forEach(o=>o.setAttribute('aria-pressed',String(o===b)));
+      r.classList.remove('ok','bad');
+    });
+  });
+  $('#check').onclick=()=>{
+    const left=S6.length-Object.keys(pick).length;
+    if(left){setMsg('Sort all 12 sentences. 還有 '+left+' 句沒選。');return;}
+    let bad=0;
+    $$('.srow').forEach(r=>{const good=pick[r.dataset.i]===S6[r.dataset.i].k;r.classList.toggle('ok',good);r.classList.toggle('bad',!good);if(!good)bad++;});
+    if(bad){setMsg(bad+' sentence'+(bad>1?'s are':' is')+' wrong (red). Read again. 紅色框的再讀一次。');shake($('.srow.bad'));return;}
+    setMsg('All sorted! Now add the gems of the 📡 Ramos sentences. 分類全對！','info');
+    $('#check').hidden=true;
+    $$('.srow').forEach(r=>r.classList.add('show'));
+    $('#sumcard').hidden=false;
+  };
+  const sumcheck=()=>{
+    const v=parseInt($('#sum').value,10);
+    if(isNaN(v)){setMsg('Write the total. 請寫出總和。');return;}
+    if(v!==SUM){setMsg('Not yet. Add only the 📡 Ramos sentences. “Both” does not count. 只加 Ramos 專屬的，Both 不算。');shake($('#sum'));return;}
+    finishStation(st,String(SUM),'Total gems: the magic number for Lock 6');
+  };
+  $('#sumcheck').onclick=sumcheck;onEnter($('#sum'),sumcheck);
+  showIfDone(st,'Total gems: the magic number for Lock 6');
+  wireCommon('s6',[
+    'Tocky is a ball clock that jumps and runs away. Ramos has a beacon, an app and a code. “Both” means the sentence is true for both clocks. Tocky 是會跳會跑的球；Ramos 有訊號傳送器、App 和密碼；Both 是兩個都對。',
+    '<b>Tocky:</b> ball, jump, noise, run, chase, promise。<b>Ramos:</b> three parts, beacon, position, phone, code, designed。',
+    '5 sentences are for Ramos only. Add only their gems. “Both” sentences do not count. 有 5 句是 Ramos 專屬，只加它們的數字，Both 不算。'
+  ]);
+}
+
+/* ---------- The Final Lock + receipt ---------- */
+function renderFinal(){
+  if(S.endTs)return renderReceipt();
+  const missing=STATIONS.filter(s=>!S.done[s.key]).map(s=>s.id);
+  const chart=Array.from({length:26},(_,i)=>`<div><b>${String.fromCharCode(65+i)}</b>${i+1}</div>`).join('');
+  const tiles=STATIONS.map(st=>{const d=S.done[st.key];return `<div class="lock${d?' on':''}"><small>Lock ${st.id}</small><b>${d?esc(d.sym):'?'}</b></div>`;}).join('');
+  $('#view').innerHTML=`
+  <a class="back" href="#home">← Menu 選單</a>
+  <div class="st-head"><div class="st-emoji" aria-hidden="true">🪄</div><div><div class="kick">Final</div><h1>The Final Lock</h1><div class="zh">咒語</div></div></div>
+  <div class="story"><p>Put your 6 magic symbols in the right locks. Say the spell to Dracula!</p>
+    <p class="zh">把 6 個魔法符號放進正確的格子。數字要先換成字母。</p></div>
+  <button class="linkbtn" id="zhbtn" type="button" aria-expanded="false">🇹🇼 中文說明（免費）</button>
+  <div class="zhbox" id="zhbox" hidden>把 6 個魔法符號放進對應的鎖。第 1、6 個是數字，要用 A=1、B=2、C=3… 換成字母。六個字母連起來就是咒語，說給 Dracula 聽，把他叫醒。</div>
+  ${missing.length?`<div class="msg info">You have not finished Station ${missing.join(', ')}. Your receipt will show this. 你還沒完成第 ${missing.join('、')} 站，收據上會顯示。</div>`:''}
+  <div class="card"><h3>Your symbols 你的符號</h3><div class="locks">${tiles}</div></div>
+  <div class="card"><h3>Number → letter chart 數字換字母</h3><div class="chart">${chart}</div></div>
+  <div class="card"><h3>The 6 locks 六個鎖</h3>
+    <div class="lockin">${[1,2,3,4,5,6].map(n=>`<div><label for="l${n}">Lock ${n}</label><input id="l${n}" type="text" maxlength="2" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Lock ${n}"></div>`).join('')}</div>
+    <button class="btn primary block" id="check" type="button" style="margin-top:12px">Say the spell 🪄</button></div>
+  <div class="msg" id="msg" role="status"></div>
+  <div id="hintbox"></div><button class="btn ghost block" id="hintbtn" type="button"></button>`;
+  const inputs=[1,2,3,4,5,6].map(n=>$('#l'+n));
+  inputs.forEach((inp,i)=>{
+    inp.addEventListener('input',()=>{inp.classList.remove('bad','ok');const v=inp.value.replace(/[^a-z0-9]/gi,'');inp.value=v.toUpperCase();if(v.length>=1&&/[a-z]/i.test(v)&&inputs[i+1])inputs[i+1].focus();});
+    onEnter(inp,()=>$('#check').click());
+  });
+  $('#check').onclick=()=>{
+    const vals=inputs.map(i=>i.value.trim().toUpperCase());
+    if(vals.some(v=>!v)){setMsg('Fill in all 6 locks. 六個格子都要填。');return;}
+    const bad=[];
+    vals.forEach((v,i)=>{const good=v===SECRET[i];inputs[i].classList.remove('ok','bad');inputs[i].classList.add(good?'ok':'bad');if(!good)bad.push(i+1);});
+    if(bad.length){
+      const digit=vals.findIndex(v=>/\d/.test(v));
+      setMsg(digit>=0?'Lock '+(digit+1)+' needs a LETTER. Use the chart: A=1, B=2... 要填字母，用上面的表換。':'Lock '+bad.join(', ')+(bad.length>1?' are':' is')+' not right. Check that station again. 再檢查那一站。');
+      shake($('.lockin'));return;
+    }
+    sync();S.endTs=Date.now();S.finalMs=S.endTs-S.startTs+hintsTotal()*PEN;save();tick();TTS.stop();renderReceipt(true);
+  };
+  wireCommon('final',[
+    'Use the chart. A=1, B=2, C=3 ... 用上面的對照表。',
+    'Lock 1 and Lock 6 are numbers. Turn them into letters. 第 1 和第 6 個鎖是數字，要換成字母。',
+    'The spell is what you say to Dracula: “Wake ___!” 咒語是你對 Dracula 說的話：Wake ___！'
+  ]);
+}
+function renderReceipt(){
+  const rows=STATIONS.map(st=>{const d=S.done[st.key];return `<div class="row"><span>${d?'[x]':'[ ]'} ${esc(st.title)}</span><b>${d?fmt(d.t):'not done'}</b></div>`;}).join('');
+  const raw=S.endTs-S.startTs,pen=hintsTotal()*PEN;
+  $('#view').innerHTML=`
+  <a class="back" href="#home">← Menu 選單</a>
+  <div class="msg info">📸 Take a screenshot of this receipt and show your teacher. 請截圖這張收據給老師看。</div>
+  <div class="receipt" id="receipt">
+    <h2>Wake Up, Dracula!</h2><div class="c">DRACULA WOKE UP ON TIME!</div><hr>
+    <div class="name">${esc(S.name)}${S.seat?' (#'+esc(S.seat)+')':''}</div>
+    ${S.grp?`<div class="c">Group ${esc(S.grp)}</div>`:''}
+    <div class="spell">${SECRET}</div><hr>
+    <div class="row"><span>Finished</span><b>${stamp(S.endTs)}</b></div>
+    <div class="row"><span>Time</span><b>${fmt(raw)}</b></div>
+    <div class="row"><span>Hint penalty</span><b>+${fmt(pen)}</b></div>
+    <div class="row"><span>Total time</span><b>${fmt(S.finalMs)}</b></div>
+    <div class="row"><span>Hints used</span><b>${hintsTotal()}</b></div><hr>
+    ${rows}<hr>
+    <div class="c">Thank you! Happy Halloween 🎃</div>
+  </div>`;
+  window.scrollTo(0,0);
+}
+
+/* ---------- router ---------- */
+function route(){
+  sync();TTS.stop();
+  const h=(location.hash||'#home').slice(1);
+  window.scrollTo(0,0);
+  tick();
+  if(!S.startTs)return renderStart(h);
+  if(h==='final')return renderFinal();
+  const fn={s1:renderS1,s2:renderS2,s3:renderS3,s4:renderS4,s5:renderS5,s6:renderS6}[h];
+  const st=STATIONS.find(s=>s.key===h);
+  if(fn&&st)return fn(st);
+  renderHome();
+}
+window.addEventListener('hashchange',route);
+route();
+})();
+</script>
+</body>
+</html>
