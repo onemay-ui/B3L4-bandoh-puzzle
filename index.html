@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0e1536">
-<title>Wake Up, Dracula!</title>
+<meta name="theme-color" content="#160d24">
+<title>Ghost Ban-doh: Lights Out!</title>
 <style>
 :root{
-  --ink:#0e1536;      /* midnight, page */
-  --plum:#19255c;     /* raised surfaces */
-  --plum2:#25367f;
-  --line:#4c5fb0;
-  --accent:#ffcf4a;   /* moonlight: primary action */
-  --accent-d:#d9a822;
-  --on:#1b1500;       /* text on accent */
-  --custard:#fff0b8;  /* receipt / result */
-  --ink2:#4a4f86;
-  --bone:#f6f4ff;
-  --muted:#b9c1ee;
+  --ink:#160d24;      /* night street */
+  --plum:#26163f;     /* raised surfaces */
+  --plum2:#3a2260;
+  --line:#7a5cc0;
+  --accent:#ffb347;   /* lantern light: primary action */
+  --accent-d:#d98a1c;
+  --on:#2a1600;
+  --custard:#ffe9b8;
+  --ink2:#5a4a86;
+  --bone:#f7f2ff;
+  --muted:#cdbdf0;
   --mint:#8fe3b0;
   --berry:#ff7a8a;
   --r:14px;
@@ -26,7 +26,7 @@
 html,body{margin:0}
 body{
   background:var(--ink);
-  background-image:radial-gradient(900px 480px at 50% -140px,#2a3d9a 0,transparent 70%);
+  background-image:radial-gradient(900px 480px at 50% -140px,#5a2a8a 0,transparent 70%);
   background-attachment:fixed;
   color:var(--bone);
   font-family:ui-rounded,"SF Pro Rounded","Hiragino Maru Gothic ProN","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -34,6 +34,7 @@ body{
   padding-bottom:env(safe-area-inset-bottom);
 }
 a{color:inherit}
+[hidden]{display:none!important}
 h1,h2,h3{margin:0;line-height:1.2}
 h1{font-size:1.55rem;letter-spacing:.01em}
 h3{font-size:1.05rem}
@@ -42,15 +43,18 @@ button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--custard);outline-offset:2px}
 
 /* header */
-.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top));background:rgba(14,21,54,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:8px;text-decoration:none;font-weight:700}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));background:rgba(22,13,36,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;min-width:0}
+.brand span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tright{display:flex;align-items:center;gap:8px}
 .timerwrap{position:relative}
 .timer{font-variant-numeric:tabular-nums;font-weight:700;background:var(--plum);border:1px solid var(--line);border-radius:999px;padding:3px 12px}
 .timer.stopped{background:var(--custard);color:var(--ink);border-color:var(--custard)}
 .plus{position:absolute;right:6px;top:100%;margin-top:2px;font-weight:800;color:var(--berry);opacity:0;pointer-events:none}
 .plus.go{animation:plus 1.4s ease-out}
 @keyframes plus{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(12px)}}
+.sfxbtn{width:40px;height:36px;border-radius:999px;border:1px solid var(--line);background:var(--plum);cursor:pointer;font-size:1.05rem;padding:0}
 main{max-width:520px;margin:0 auto;padding:16px 16px 48px}
 
 /* surfaces */
@@ -59,7 +63,8 @@ main{max-width:520px;margin:0 auto;padding:16px 16px 48px}
 .note{color:var(--muted);font-size:.92rem}
 .zh{color:var(--muted);font-size:.92rem}
 .back{display:inline-block;text-decoration:none;color:var(--muted);padding:6px 0;font-size:.95rem}
-.tag{display:inline-block;background:var(--ink);border-radius:8px;padding:1px 8px;font-size:.85rem;color:var(--custard);margin-top:4px}
+.ok-card{border-color:var(--mint)!important}
+.bad-card{border-color:var(--berry)!important}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 18px;border-radius:12px;border:2px solid var(--line);background:var(--plum2);font-weight:700;cursor:pointer;text-decoration:none}
@@ -77,7 +82,7 @@ main{max-width:520px;margin:0 auto;padding:16px 16px 48px}
 /* forms */
 input[type=text],input[type=number],input[type=tel],select{width:100%;min-height:48px;padding:8px 12px;border-radius:12px;border:2px solid var(--line);background:var(--ink);color:var(--bone)}
 select{appearance:auto}
-input::placeholder{color:#7f8ac4}
+input::placeholder{color:#8f80c4}
 .field{display:block;margin:10px 0}
 .field>span{display:block;font-size:.92rem;color:var(--muted);margin-bottom:4px}
 
@@ -88,56 +93,61 @@ input::placeholder{color:#7f8ac4}
 .story{border-left:4px solid var(--accent);padding:2px 0 2px 12px;margin:8px 0 4px}
 .zhbox{background:var(--plum);border:1px dashed var(--line);border-radius:12px;padding:8px 12px;margin:4px 0 8px;color:var(--muted)}
 
-/* snooze math (station 1) */
-.sleeper .who{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.sleeper .who b{flex:1}
-.sleeper .who .e{font-size:1.7rem}
-.scratch{display:flex;align-items:center;gap:8px;margin:6px 0}
-.scratch input{max-width:96px;text-align:center}
-.scratch span{color:var(--muted)}
-.pay{display:flex;align-items:center;gap:8px;margin-top:8px}
-.pay span{font-weight:700;white-space:nowrap}
-.pay input{max-width:110px}
-.ok-card{border-color:var(--mint)!important}
-.bad-card{border-color:var(--berry)!important}
-
-/* picker cards (stations 3-5) */
-.bank{display:flex;flex-wrap:wrap;gap:6px}
-.bank span{background:var(--plum2);border-radius:999px;padding:3px 12px;font-weight:700}
-.boxes{display:grid;grid-template-columns:repeat(var(--n,5),1fr);gap:6px}
-.boxes div{background:var(--ink);border:2px dashed var(--line);border-radius:10px;text-align:center;padding:2px 0 4px;min-height:58px}
-.boxes small{display:block;color:var(--muted);font-size:.7rem}
-.boxes b{font-size:1.4rem}
-.boxes div.on{border-style:solid;border-color:var(--custard);background:var(--plum2)}
-.pick .got{margin-top:6px;font-size:1.2rem;font-weight:700;letter-spacing:.06em}
-.pick .got mark{background:var(--custard);color:var(--ink);border-radius:5px;padding:0 3px}
-
-/* sorter (station 6) */
-.legend{display:flex;gap:8px}
-.srow{margin:8px 0;padding:8px;border-radius:12px;border:2px solid transparent;background:var(--ink)}
-.srow.ok{border-color:var(--mint)}
-.srow.bad{border-color:var(--berry)}
-.srow .top2{display:flex;align-items:center;gap:8px}
-.srow .txt{flex:1;min-width:0}
-.gem{flex:none;min-width:46px;text-align:center;background:var(--plum2);border-radius:10px;padding:2px 6px;font-weight:700;font-variant-numeric:tabular-nums}
-.seg{display:flex;gap:4px;margin-top:8px}
-.seg button{flex:1;min-width:0;min-height:46px;padding:2px;border-radius:10px;border:2px solid var(--line);background:var(--plum);cursor:pointer;line-height:1.15;font-weight:700}
-.seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on)}
-.srow .gem{visibility:hidden}
-.srow.show .gem{visibility:visible}
-
-/* word wand-like player (station 2) */
+/* listening player */
 .player{text-align:center}
-.bigplay{width:112px;height:112px;border-radius:50%;border:0;background:var(--accent);color:var(--on);font-size:2.6rem;cursor:pointer;box-shadow:0 6px 0 var(--accent-d)}
+.bigplay{width:104px;height:104px;border-radius:50%;border:0;background:var(--accent);color:var(--on);font-size:2.4rem;cursor:pointer;box-shadow:0 6px 0 var(--accent-d)}
 .bigplay:active{transform:translateY(3px);box-shadow:0 3px 0 var(--accent-d)}
 .bigplay.speaking{animation:pulse .9s ease-in-out infinite}
-.dots{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:12px 0 6px}
-.dots button{min-height:44px;padding:0;border-radius:8px;border:2px solid var(--line);background:var(--ink);cursor:pointer;font-weight:700}
-.dots button.cur{border-color:var(--custard);background:var(--plum2)}
-.dots button.seen{background:var(--plum)}
-.navrow{display:flex;gap:8px;justify-content:center;margin-top:8px}
-.navrow .btn{flex:1;white-space:nowrap;padding:10px 6px}
-.letters{letter-spacing:.35em;text-transform:uppercase;text-align:center;font-weight:800}
+.playnote{margin-top:10px;color:var(--muted);font-size:.9rem}
+
+/* question card */
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;font-weight:700}
+.bat{letter-spacing:.1em;white-space:nowrap}
+.bat .lost{opacity:.22;filter:grayscale(1)}
+.bulbs{display:flex;gap:4px;justify-content:center;margin:2px 0 8px}
+.bulbs i{font-style:normal;font-size:1.2rem;filter:grayscale(1);opacity:.35}
+.bulbs i.on{filter:none;opacity:1}
+.qtext{font-size:1.15rem;font-weight:700;margin:10px 0 4px;text-align:center}
+.opt{display:flex;align-items:center;gap:8px;width:100%;text-align:left;min-height:52px;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--plum2);font-weight:700;margin:8px 0;cursor:pointer}
+.opt small{margin-left:auto;font-weight:400;color:var(--muted);white-space:nowrap}
+.opt.ok{border-color:var(--mint);background:rgba(143,227,176,.18)}
+.opt.bad{border-color:var(--berry);background:rgba(255,122,138,.16)}
+.opt.struck{opacity:.3;text-decoration:line-through}
+.opt[disabled]{cursor:default}
+.feed{margin:10px 0 0;padding:10px 12px;border-radius:12px;font-weight:600}
+.feed:empty{display:none}
+.feed.good{background:rgba(143,227,176,.15);border:2px solid var(--mint)}
+.feed.nope{background:rgba(255,122,138,.16);border:2px solid var(--berry)}
+
+/* dictation tiles */
+.slots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:14px 0 10px}
+.slot{width:34px;height:46px;border:2px dashed var(--line);border-radius:8px;display:grid;place-items:center;font-size:1.5rem;font-weight:800;background:var(--ink)}
+.slot.f{border-style:solid;border-color:var(--custard);background:var(--plum2)}
+.slot.vis{border-style:solid;border-color:transparent;background:var(--plum)}
+.slot.given{border-color:var(--accent)}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
+.tile{width:46px;height:52px;border-radius:10px;border:2px solid var(--line);background:var(--plum2);font-size:1.4rem;font-weight:800;cursor:pointer;padding:0}
+.tile[disabled]{opacity:.2;cursor:default}
+.row2{display:flex;gap:8px;margin-top:8px}
+.row2 .btn{flex:1}
+
+/* ordering */
+.ordslot{display:flex;gap:10px;align-items:center;min-height:50px;border:2px dashed var(--line);border-radius:10px;padding:6px 10px;margin:6px 0;background:var(--ink)}
+.ordslot>b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--plum2);display:grid;place-items:center;font-size:.85rem}
+.ordslot.f{border-style:solid;border-color:var(--custard);cursor:pointer}
+.ordcards{display:grid;gap:8px;margin:8px 0}
+.ordcards button{text-align:left;min-height:48px;padding:8px 12px;border-radius:12px;border:2px solid var(--line);background:var(--plum2);font-weight:700;cursor:pointer}
+.ordcards button[disabled]{opacity:.25;cursor:default}
+
+/* walkie-talkie */
+.who{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--ink);border:2px solid var(--accent);margin:8px 0}
+.who .e{font-size:1.8rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chips span{background:var(--ink);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:.9rem}
+.code{display:inline-block;font-variant-numeric:tabular-nums;letter-spacing:.12em;background:var(--custard);color:var(--ink);border-radius:8px;padding:0 8px;font-weight:800}
+.seg{display:flex;gap:6px;margin:6px 0}
+.seg button{flex:1;min-height:48px;border-radius:10px;border:2px solid var(--line);background:var(--plum);font-weight:800;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on)}
 
 /* messages & hints */
 .msg{margin:10px 0;padding:10px 12px;border-radius:12px;font-weight:600}
@@ -145,14 +155,12 @@ input::placeholder{color:#7f8ac4}
 .msg.bad{background:rgba(255,122,138,.16);border:2px solid var(--berry)}
 .msg.info{background:var(--plum2);border:2px solid var(--line)}
 .hint{background:var(--ink);border:2px dashed var(--custard);border-radius:12px;padding:8px 12px;margin:8px 0}
-.hint table{border-collapse:collapse;width:100%;margin-top:4px}
-.hint td{padding:2px 6px;border-bottom:1px solid var(--line);font-size:.95rem}
 .shake{animation:shake .35s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 /* unlock result */
 .result{margin:14px 0;padding:16px;border-radius:var(--r);background:var(--custard);color:var(--ink);text-align:center}
-.result .big{font-size:3rem;font-weight:800;line-height:1.1;margin:2px 0}
+.result .big{font-size:3.2rem;font-weight:800;line-height:1.1;margin:2px 0}
 .result.pop{animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
 @keyframes pop{from{transform:scale(.8);opacity:0}}
 .result .note{color:var(--ink2)}
@@ -160,10 +168,14 @@ input::placeholder{color:#7f8ac4}
 /* home */
 .hero{text-align:center;padding:10px 0 2px}
 .hero .big{font-size:3.4rem;line-height:1}
-.locks{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:8px 0}
+.tent{display:flex;justify-content:center;gap:6px;margin:6px 0 2px;padding:8px 0;border-radius:12px;background:linear-gradient(#0c0616,#1d1030)}
+.lamp{font-size:1.9rem;filter:grayscale(1) brightness(.6);opacity:.55;animation:flick 2.4s steps(1) infinite}
+.lamp.on{filter:drop-shadow(0 0 8px #ffb347);opacity:1;animation:none}
+@keyframes flick{0%{opacity:.55}10%{opacity:.2}12%{opacity:.6}60%{opacity:.35}62%{opacity:.7}100%{opacity:.55}}
+.locks{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:8px 0}
 .lock{background:var(--ink);border:2px dashed var(--line);border-radius:12px;text-align:center;padding:6px 0 8px}
-.lock small{display:block;color:var(--muted);font-size:.66rem}
-.lock b{font-size:1.3rem}
+.lock small{display:block;color:var(--muted);font-size:.68rem}
+.lock b{font-size:1.4rem}
 .lock.on{border-style:solid;border-color:var(--custard);background:var(--plum2)}
 .slist{display:grid;gap:8px;margin:8px 0}
 .slist a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--plum);border:2px solid var(--line);text-decoration:none}
@@ -174,12 +186,12 @@ input::placeholder{color:#7f8ac4}
 .slist .chk{font-weight:800;color:var(--mint);font-variant-numeric:tabular-nums}
 
 /* final */
-.chart{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;font-size:.78rem;text-align:center}
-.chart div{background:var(--ink);border-radius:6px;padding:2px 0;line-height:1.2}
-.chart b{display:block;font-size:.95rem}
-.lockin{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.wire{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center}
+.wire div{background:var(--ink);border-radius:10px;padding:4px 0;font-size:.78rem;color:var(--muted)}
+.wire b{display:block;color:var(--custard);font-size:1.05rem}
+.lockin{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .lockin label{display:block;text-align:center;font-size:.72rem;color:var(--muted)}
-.lockin input{text-align:center;font-size:1.4rem;font-weight:800;text-transform:uppercase;padding:6px 0;min-width:0}
+.lockin input{text-align:center;font-size:1.5rem;font-weight:800;text-transform:uppercase;padding:6px 0;min-width:0}
 .lockin input.bad{border-color:var(--berry)}
 .lockin input.ok{border-color:var(--mint)}
 
@@ -187,28 +199,46 @@ input::placeholder{color:#7f8ac4}
 .receipt{position:relative;background:var(--custard);color:var(--ink);padding:20px 18px 26px;margin:18px 0;font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Noto Sans TC",monospace;
   -webkit-mask:radial-gradient(circle 8px at 50% 100%,transparent 98%,#000) bottom/16px 51% repeat-x,linear-gradient(#000,#000) top/100% 50% no-repeat;
   mask:radial-gradient(circle 8px at 50% 100%,transparent 98%,#000) bottom/16px 51% repeat-x,linear-gradient(#000,#000) top/100% 50% no-repeat}
-.receipt h2{text-align:center;font-size:1.3rem;margin-bottom:2px}
+.receipt h2{text-align:center;font-size:1.25rem;margin-bottom:2px}
 .receipt .c{text-align:center}
-.receipt hr{border:0;border-top:2px dashed rgba(14,21,54,.45);margin:10px 0}
+.receipt hr{border:0;border-top:2px dashed rgba(22,13,36,.45);margin:10px 0}
 .receipt .row{display:flex;justify-content:space-between;gap:10px;font-size:.93rem;padding:1px 0}
 .receipt .row b{text-align:right}
 .receipt .name{font-size:1.5rem;font-weight:800;text-align:center;word-break:break-word}
 .receipt .spell{font-size:2rem;letter-spacing:.25em;text-align:center;font-weight:800;margin:4px 0 0 .25em}
+.receipt .lamps{text-align:center;font-size:1.4rem;letter-spacing:.2em}
+
+/* effects */
+#flash{position:fixed;inset:0;z-index:40;pointer-events:none;background:rgba(255,60,80,.38);opacity:0}
+#flash.go{animation:flash .45s ease-out}
+@keyframes flash{0%{opacity:1}100%{opacity:0}}
+#lock{position:fixed;inset:0;z-index:50;background:rgba(10,4,20,.94);display:flex;align-items:center;justify-content:center;padding:24px}
+#lock[hidden]{display:none}
+.lockbox{text-align:center;max-width:320px}
+.lockbox .big{font-size:3.6rem}
+.lockbox .count{font-size:3.4rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent)}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:360px){
   body{font-size:16px}
-  .lock b{font-size:1.1rem}
-  .lockin input{font-size:1.15rem}
+  .tile{width:42px;height:48px}
+  .lockin input{font-size:1.25rem}
 }
 </style>
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="#home"><span aria-hidden="true">🧛</span><span>Wake Up, Dracula!</span></a>
-  <div class="timerwrap"><div class="timer" id="timer" hidden>⏱ <span id="tm">00:00</span></div><span class="plus" id="plus" aria-live="polite"></span></div>
+  <a class="brand" href="#home"><span aria-hidden="true">🏮</span><span>Ghost Ban-doh</span></a>
+  <div class="tright">
+    <button class="sfxbtn" id="sfxbtn" type="button" aria-label="Sound effects on or off 音效開關">🔔</button>
+    <div class="timerwrap"><div class="timer" id="timer" hidden>⏱ <span id="tm">00:00</span></div><span class="plus" id="plus" aria-live="polite"></span></div>
+  </div>
 </header>
 <main id="view"></main>
+<div id="flash" aria-hidden="true"></div>
+<div id="lock" hidden role="alert"><div class="lockbox"><div class="big">🔌</div><h2>Short circuit! 短路了！</h2>
+  <p>The battery is empty. Recharging… 電量用完，充電中…</p><div class="count" id="lockn">30</div>
+  <p class="note">Think about what you heard. Talk with your group. 想一想剛才聽到的，和同組討論。</p></div></div>
 
 <script>
 (function(){
@@ -220,20 +250,23 @@ const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const pad=n=>String(n).padStart(2,'0');
-const ord=n=>({1:'1st',2:'2nd',3:'3rd'}[n]||n+'th');
-// the n-th letter of a word or phrase, spaces not counted
-const nth=(w,n)=>w.replace(/\s/g,'')[n-1].toUpperCase();
-function highlight(w,n){let k=0;return esc(w).split('').map(c=>{if(c===' ')return c;k++;return k===n?`<mark>${c}</mark>`:c;}).join('');}
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function rng(seed){let a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function shuffle(arr,r){r=r||Math.random;const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
 /* ---------- state (localStorage keeps the timer alive when a new QR code is scanned) ---------- */
-const KEY='b1l4-escape.v1';
-const PEN=10000; // each hint adds 10 seconds
-function fresh(){return {name:'',seat:'',grp:'',startTs:0,endTs:0,finalMs:0,done:{},hints:{}};}
+const KEY='b3l4-lights.v1';
+const PEN=10000;      // each hint adds 10 seconds
+const HINTMAX=3;      // hints per station
+const BAT=3;          // battery per station
+const LOCKMS=30000;   // recharge time when the battery is empty
+function fresh(){return {name:'',seat:'',grp:'',startTs:0,endTs:0,finalMs:0,done:{},hints:{},wrong:{},bat:{},lockUntil:0,pair:null};}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));return s&&typeof s==='object'?Object.assign(fresh(),s):fresh();}catch(e){return fresh();}}
 let S=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 function sync(){S=load();}
 const hintsTotal=()=>Object.values(S.hints).reduce((a,b)=>a+b,0);
+const wrongTotal=()=>Object.values(S.wrong).reduce((a,b)=>a+b,0);
 const elapsed=()=>S.endTs?S.finalMs:(Date.now()-S.startTs+hintsTotal()*PEN);
 function fmt(ms){const s=Math.max(0,Math.floor(ms/1000));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+':'+pad(m):pad(m))+':'+pad(x);}
 function stamp(ts){const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());}
@@ -249,7 +282,73 @@ setInterval(tick,1000);
 window.addEventListener('storage',e=>{if(e.key===KEY){sync();tick();}});
 function flashPlus(){const p=$('#plus');p.textContent='+'+(PEN/1000)+'s';p.classList.remove('go');void p.offsetWidth;p.classList.add('go');}
 
-/* ---------- speech (the phone reads aloud) ---------- */
+/* ---------- sound effects (made by the phone, no sound files) ---------- */
+const SFX=(function(){
+  let ctx=null,on=true;
+  try{on=localStorage.getItem('b3l4.sfx')!=='0';}catch(e){}
+  function ac(){
+    if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{ctx=new C();}catch(e){return null;}}
+    if(ctx.state==='suspended'){try{ctx.resume();}catch(e){}}
+    return ctx;
+  }
+  function tone(f,t0,dur,type,vol,f2){
+    const c=ac();if(!c)return;
+    try{
+      const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+t0;
+      o.type=type||'sine';o.frequency.setValueAtTime(f,t);
+      if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+      g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||0.2,t+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+0.03);
+    }catch(e){}
+  }
+  function noise(t0,dur,vol){
+    const c=ac();if(!c)return;
+    try{
+      const n=Math.max(1,Math.floor(c.sampleRate*dur)),b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);
+      for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
+      const s=c.createBufferSource(),g=c.createGain();s.buffer=b;g.gain.value=vol||0.2;s.connect(g);g.connect(c.destination);s.start(c.currentTime+t0);
+    }catch(e){}
+  }
+  return {
+    get on(){return on;},
+    set(v){on=!!v;try{localStorage.setItem('b3l4.sfx',on?'1':'0');}catch(e){}},
+    prime(){ac();},
+    ding(){if(!on)return;tone(880,0,.14,'sine',.26);tone(1320,.11,.34,'sine',.26);},
+    buzz(){if(!on)return;tone(130,0,.4,'sawtooth',.22,66);tone(140,0,.4,'square',.1,70);noise(0,.14,.18);try{if(navigator.vibrate)navigator.vibrate([90,40,140]);}catch(e){}},
+    unlock(){if(!on)return;noise(0,.06,.3);tone(220,.08,.5,'triangle',.2,880);[660,830,990].forEach((f,i)=>tone(f,.55+i*.1,.32,'sine',.2));},
+    fanfare(){if(!on)return;[523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,i*.15,.32,'triangle',.24));},
+    power(){if(!on)return;tone(180,0,.4,'sawtooth',.12,720);},
+    // these two are part of the listening content, so they ignore the on/off switch
+    beep(){tone(1000,0,.32,'sine',.22);},
+    ring(){tone(660,0,.16,'sine',.2);tone(880,.2,.16,'sine',.2);tone(660,.5,.16,'sine',.2);tone(880,.7,.16,'sine',.2);}
+  };
+})();
+function wireSfxBtn(){
+  const b=$('#sfxbtn');
+  const paint=()=>{b.textContent=SFX.on?'🔔':'🔕';b.setAttribute('aria-pressed',String(SFX.on));};
+  b.onclick=()=>{SFX.set(!SFX.on);SFX.prime();paint();if(SFX.on)SFX.ding();};
+  paint();
+}
+document.addEventListener('pointerdown',()=>SFX.prime(),{once:true});
+
+/* ---------- speech (the phone reads aloud, each character has its own voice) ---------- */
+const V={
+  lantern:{p:.85,r:.82},   // Uncle Lantern
+  granny:{p:.55,r:.78},    // Granny Ghost
+  chef:{p:1.0,r:.85},      // Chef Ghost
+  kid:{p:1.55,r:.85},      // little ghost on the phone
+  plain:{p:1,r:.82}
+};
+function seq(text,voice){ // split "(beep)" out of a sentence
+  const v=V[voice||'plain'];
+  const parts=text.split('(beep)'),out=[];
+  parts.forEach((p,i)=>{
+    const t=p.trim();
+    if(t)out.push({t:t,p:v.p,r:v.r});
+    if(i<parts.length-1)out.push({beep:1});
+  });
+  return out;
+}
 const TTS=(function(){
   const ok='speechSynthesis' in window&&'SpeechSynthesisUtterance' in window;
   let voice=null,token=0,activeBtn=null;
@@ -260,16 +359,18 @@ const TTS=(function(){
   }
   if(ok){pick();try{speechSynthesis.addEventListener('voiceschanged',pick);}catch(e){}}
   function clearBtn(){if(activeBtn){activeBtn.classList.remove('speaking');activeBtn=null;}}
-  function stop(){token++;clearBtn();if(ok){try{speechSynthesis.cancel();}catch(e){}}}
-  function say(text,rate){
+  let laterT=null;
+  function later(fn,ms){clearTimeout(laterT);laterT=setTimeout(fn,ms);}
+  function stop(){token++;clearTimeout(laterT);clearBtn();if(ok){try{speechSynthesis.cancel();}catch(e){}}}
+  function say(text,rate,pitch){
     return new Promise(res=>{
       if(!ok){res(false);return;}
       const my=token;let done=false,t;
       const u=new SpeechSynthesisUtterance(text);
-      u.lang='en-US';if(voice)u.voice=voice;u.rate=rate||0.85;
+      u.lang='en-US';if(voice)u.voice=voice;u.rate=rate||0.82;u.pitch=pitch||1;
       const fin=()=>{if(done)return;done=true;clearTimeout(t);res(my===token);};
       u.onend=fin;u.onerror=fin;
-      t=setTimeout(fin,3000+text.length*120); // safety net if a phone never fires onend
+      t=setTimeout(fin,3000+text.length*130); // safety net if a phone never fires onend
       try{speechSynthesis.speak(u);}catch(e){fin();}
     });
   }
@@ -280,13 +381,19 @@ const TTS=(function(){
     if(opts.btn){activeBtn=opts.btn;opts.btn.classList.add('speaking');}
     for(let i=0;i<items.length;i++){
       if(my!==token)return;
-      await say(items[i],opts.rate);
+      const it=items[i];
+      if(typeof it==='string')await say(it,opts.rate,opts.pitch);
+      else if(it.beep){SFX.beep();await sleep(520);}
+      else if(it.ring){SFX.ring();await sleep(1100);}
+      else if(it.gapOnly){await sleep(it.gapOnly);}
+      else await say(it.t,it.r||opts.rate,it.p||opts.pitch);
       if(my!==token)return;
-      if(i<items.length-1)await sleep(opts.gap||700);
+      if(i<items.length-1)await sleep(opts.gap||450);
     }
     if(my===token)clearBtn();
+    return my===token;   // true only if it played to the end without being stopped
   }
-  return {ok,stop,play};
+  return {ok,stop,play,later};
 })();
 function noVoice(){setMsg('This phone cannot read aloud. Ask your teacher. 這支手機無法朗讀，請問老師。','info');}
 // any button with data-say reads its text aloud once; tapping it again stops it
@@ -297,71 +404,120 @@ document.addEventListener('click',e=>{
   if(!TTS.ok){noVoice();return;}
   TTS.play([b.dataset.say],{btn:b});
 });
+// a play button: toggles playing a list of items
+function wirePlay(btn,getItems,opts){
+  btn.onclick=()=>{
+    SFX.prime();
+    if(btn.classList.contains('speaking')){TTS.stop();return;}
+    if(!TTS.ok){noVoice();return;}
+    const r=TTS.play(getItems(),Object.assign({btn:btn},opts||{}));
+    if(opts&&opts.onDone)r.then(done=>{if(done)opts.onDone();});
+  };
+}
 
 /* ---------- content ---------- */
 const STATIONS=[
-  {id:1,key:'s1',emoji:'⏰',title:'Snooze Math',zh:'貪睡數學（聽力＋時間）'},
-  {id:2,key:'s2',emoji:'📖',title:'Spell Book',zh:'拼字咒語（紙本聽寫）'},
-  {id:3,key:'s3',emoji:'🔐',title:'Phrase Lock',zh:'片語鎖'},
-  {id:4,key:'s4',emoji:'👻',title:'Who Am I?',zh:'定義謎語'},
-  {id:5,key:'s5',emoji:'🧪',title:'Word Family Cauldron',zh:'字族鍋（詞性）'},
-  {id:6,key:'s6',emoji:'🕰️',title:'Tocky or Ramos?',zh:'閱讀理解'}
+  {id:1,key:'s1',emoji:'📞',title:'Ghost Hotline',zh:'鬼打電話（聽定義選單字）',sym:'G'},
+  {id:2,key:'s2',emoji:'🔌',title:'Wire Repair',zh:'接線聽寫（聽句子拼字）',sym:'T'},
+  {id:3,key:'s3',emoji:'🏮',title:'Tent Crew',zh:'帳篷工班（聽流程排順序）',sym:'I'},
+  {id:4,key:'s4',emoji:'📟',title:'Walkie-Talkie',zh:'雙人對講機（一人聽、一人選）',sym:'L'},
+  {id:5,key:'s5',emoji:'📻',title:"Granny's Radio",zh:'鬼阿嬤電台（聽故事答題）',sym:'H'}
 ];
-const SECRET='WAKEUP';
+const SECRET='LIGHT';
+const WIRE=[4,3,1,5,2];   // the 1st..5th wire comes from this fuse
+const symOf=id=>STATIONS[id-1].sym;
 
 /* ---------- shared UI pieces ---------- */
 function frame(st,intro,zh,body){
   return `<a class="back" href="#home">← Menu 選單</a>
   <div class="st-head"><div class="st-emoji" aria-hidden="true">${st.emoji}</div>
-    <div><div class="kick">Station ${st.id}</div><h1>${esc(st.title)}</h1><div class="zh">${esc(st.zh)}</div></div></div>
+    <div><div class="kick">Fuse box ${st.id}</div><h1>${esc(st.title)}</h1><div class="zh">${esc(st.zh)}</div></div></div>
   <div class="story">${intro}</div>
   <button class="linkbtn" id="zhbtn" type="button" aria-expanded="false">🇹🇼 中文說明（免費）</button>
   <div class="zhbox" id="zhbox" hidden>${zh}</div>
   <div id="result"></div>
-  ${body}
+  <div id="stage">${body}</div>
   <div class="msg" id="msg" role="status"></div>
   <div id="hintbox"></div>
   <button class="btn ghost block" id="hintbtn" type="button"></button>`;
 }
+// onHint(): shows a hint for the current question and returns true, or returns false if there is nothing more to show
 let redrawHints=()=>{};
-function wireCommon(key,list){
+function wireCommon(key,onHint){
   const zb=$('#zhbtn'),zx=$('#zhbox');
   if(zb&&zx)zb.onclick=()=>{zx.hidden=!zx.hidden;zb.setAttribute('aria-expanded',String(!zx.hidden));};
-  const box=$('#hintbox'),btn=$('#hintbtn');
+  const btn=$('#hintbtn');
   const draw=()=>{
-    const n=Math.min(S.hints[key]||0,list.length);
-    box.innerHTML=list.slice(0,n).map((t,i)=>`<div class="hint"><b>💡 ${i+1}.</b> ${t}</div>`).join('');
+    if(!btn)return;
+    const n=S.hints[key]||0;
     const closed=!!S.endTs||(key!=='final'&&!!S.done[key]);
     if(closed){btn.textContent='✔ Done 已完成';btn.disabled=true;}
-    else if(n>=list.length){btn.textContent='💡 No more hints 沒有更多提示';btn.disabled=true;}
-    else{btn.textContent='💡 Open a hint 看提示 ('+n+'/'+list.length+')  +'+(PEN/1000)+' sec';btn.disabled=false;}
+    else if(n>=HINTMAX){btn.textContent='💡 No more hints 沒有提示了';btn.disabled=true;}
+    else{btn.textContent='💡 Hint 提示 ('+n+'/'+HINTMAX+' used)  +'+(PEN/1000)+' sec';btn.disabled=false;}
   };
-  btn.onclick=()=>{sync();S.hints[key]=(S.hints[key]||0)+1;save();tick();flashPlus();draw();};
+  if(btn)btn.onclick=()=>{
+    sync();
+    if((S.hints[key]||0)>=HINTMAX)return;
+    if(onHint&&onHint()===false)return;
+    S.hints[key]=(S.hints[key]||0)+1;save();tick();flashPlus();draw();
+  };
   redrawHints=draw;
   draw();
 }
+function showHint(html){const b=$('#hintbox');if(b)b.innerHTML=html?`<div class="hint">${html}</div>`:'';}
 function setMsg(text,kind){const m=$('#msg');if(!m)return;m.className='msg '+(kind||'bad');m.textContent=text;}
 function clearMsg(){const m=$('#msg');if(!m)return;m.className='msg';m.textContent='';}
 function shake(el){if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}
 function onEnter(input,fn){input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();fn();}});}
 
-function resultHTML(st,sym,line,isNew){
-  const isNum=/^\d+$/.test(sym);
-  return `<div class="result${isNew?' pop':''}"><div>🔓 Lock ${st.id} is open!</div>
-    <div class="big">${esc(sym)}</div><div>${line}</div>
-    <div class="note">${isNum?'Remember this number. Turn it into a letter at the end. 記住這個數字，最後要換成字母。':'Remember this letter for the final lock. 記住這個字母。'}</div></div>`;
+/* battery: 3 per station. A wrong answer costs 1. Empty = short circuit, wait 30 seconds. */
+const getBat=k=>S.bat[k]==null?BAT:S.bat[k];
+function batHTML(k){const b=getBat(k);return '⚡'.repeat(b)+'<span class="lost">'+'⚡'.repeat(BAT-b)+'</span>';}
+function updateBat(k){const el=$('#bat');if(el)el.innerHTML=batHTML(k);}
+function zap(){const f=$('#flash');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');}
+let lockTimer=null;
+function showLock(){
+  const box=$('#lock');
+  const left=()=>Math.ceil((S.lockUntil-Date.now())/1000);
+  if(left()<=0){box.hidden=true;return;}
+  box.hidden=false;$('#lockn').textContent=left();
+  clearInterval(lockTimer);
+  lockTimer=setInterval(()=>{
+    sync();
+    const l=left();
+    if(l<=0){clearInterval(lockTimer);box.hidden=true;SFX.power();return;}
+    $('#lockn').textContent=l;
+  },250);
 }
-function finishStation(st,sym,line){
+function wrongHit(key){ // returns true when the battery just ran out
   sync();
-  const first=!S.done[st.key];
-  if(first){S.done[st.key]={t:elapsed(),sym};save();tick();}
+  S.wrong[key]=(S.wrong[key]||0)+1;
+  const b=getBat(key)-1;let out=false;
+  if(b<=0){S.bat[key]=BAT;S.lockUntil=Date.now()+LOCKMS;out=true;}else S.bat[key]=b;
+  save();SFX.buzz();zap();updateBat(key);
+  if(out){TTS.stop();showLock();}
+  return out;
+}
+
+function resultHTML(st,sym,line,isNew){
+  return `<div class="result${isNew?' pop':''}"><div>💡 Fuse ${st.id} is fixed!</div>
+    <div class="big">${esc(sym)}</div><div>${line}</div>
+    <div class="note">Remember this letter for the main switch. 記住這個字母，最後總開關要用。</div></div>`;
+}
+function finishStation(st,line){
+  sync();
+  const sym=st.sym,first=!S.done[st.key];
+  if(first){S.done[st.key]={t:elapsed(),sym};save();tick();SFX.unlock();}
   $('#result').innerHTML=resultHTML(st,sym,line,first);
   clearMsg();redrawHints();
   if(first)$('#result').scrollIntoView({behavior:'smooth',block:'center'});
 }
-function showIfDone(st,line){
-  if(S.done[st.key])$('#result').innerHTML=resultHTML(st,S.done[st.key].sym,line,false);
+function doneLine(st){return 'Letter for fuse '+st.id;}
+function showIfDone(st){
+  if(S.done[st.key]){$('#result').innerHTML=resultHTML(st,S.done[st.key].sym,doneLine(st),false);return true;}
+  return false;
 }
+function bulbsHTML(total,solved){return '<div class="bulbs" aria-hidden="true">'+Array.from({length:total},(_,i)=>`<i class="${i<solved?'on':''}">💡</i>`).join('')+'</div>';}
 
 /* ---------- start / home ---------- */
 let pendingRoute='home';
@@ -369,394 +525,537 @@ function renderStart(target){
   pendingRoute=target||'home';
   const waiting=pendingRoute!=='home'?`<div class="msg info">Your station is waiting. Enter your name first. 先輸入姓名再開始。</div>`:'';
   $('#view').innerHTML=`
-  <div class="hero"><div class="big" aria-hidden="true">🧛</div><h1>Wake Up, Dracula!</h1></div>
-  <div class="story"><p>It is Halloween night. The party starts at midnight. But Dracula is still sleeping!</p>
-    <p>Solve 6 stations. Get 6 magic symbols. Say the spell. Wake him up on time!</p>
-    <p class="zh">萬聖夜的派對午夜開始，但 Dracula 還在睡！完成 6 個關卡，拿到 6 個魔法符號，說出咒語，準時把他叫醒。</p></div>
+  <div class="hero"><div class="big" aria-hidden="true">🏮</div><h1>Ghost Ban-doh: Lights Out!</h1></div>
+  <div class="tent" aria-hidden="true">${[1,2,3,4,5].map(()=>'<span class="lamp">🏮</span>').join('')}</div>
+  <div class="story"><p>It is Ghost Month. Uncle Lantern is holding a big ban-doh on the street for his ghost friends.</p>
+    <p>But at midnight… <b>BOOM!</b> The lights go out! Uncle Lantern needs electricians. Fix 5 fuse boxes. Listen carefully. Light up the tent!</p>
+    <p class="zh">鬼月，燈籠伯在街上辦一場鬼客辦桌。午夜突然停電！請你當電工，修好 5 個保險絲盒，仔細聽，讓帳篷重新亮起來。</p></div>
   ${waiting}
   <div class="card">
     <label class="field"><span>Name 姓名</span><input type="text" id="nm" maxlength="20" autocomplete="off" placeholder="Your name"></label>
     <label class="field"><span>Seat number 座號（optional）</span><input type="tel" id="seat" maxlength="6" autocomplete="off" placeholder="e.g. 12"></label>
-    <label class="field"><span>Group 組別（optional）</span><select id="grp"><option value="">—</option>${[1,2,3,4,5,6].map(n=>`<option value="${n}">Group ${n}</option>`).join('')}</select></label>
+    <label class="field"><span>Group number 組別（Station 4 needs it）</span><input type="tel" id="grp" maxlength="3" autocomplete="off" placeholder="e.g. 3"></label>
     <button class="btn primary block" id="go" type="button">Start the timer 開始計時</button>
     <div class="msg" id="msg" role="status"></div>
   </div>
   <div class="card"><h3>🎧 Sound check 音量測試</h3>
-    <p class="note">Station 1 and Station 2 play sound. Use earphones. Turn the volume up. 第 1、2 站會播放聲音，請戴耳機並調高音量。</p>
-    <button class="btn block" id="test" type="button" data-say="Hello! Happy Halloween! Wake up, Dracula!">🔊 Test sound 測試聲音</button></div>
-  <div class="card"><h3>💡 Hints 提示</h3>
-    <p class="note">Each station has 3 hints. Each hint adds ${PEN/1000} seconds to your time. Try first! 每站最多 3 次提示，每次加 ${PEN/1000} 秒，先自己試試！</p></div>`;
+    <p class="note">Every station needs sound. Use earphones. Turn the volume up. Turn off silent mode. 每一站都要聽聲音，請戴耳機、調高音量、關閉靜音。</p>
+    <button class="btn block" id="test" type="button">🔊 Test sound 測試聲音</button></div>
+  <div class="card"><h3>⚡ Battery & hints 電量與提示</h3>
+    <p class="note">Wrong answer = lose 1 ⚡ (3 in each station). Empty battery = short circuit, wait ${LOCKMS/1000} seconds. Each station has ${HINTMAX} hints. Each hint adds ${PEN/1000} seconds.<br>答錯扣 1 格電（每站 3 格）；電量用完要等 ${LOCKMS/1000} 秒。每站最多 ${HINTMAX} 次提示，每次加 ${PEN/1000} 秒。</p></div>`;
   const go=()=>{
     const name=$('#nm').value.trim();
     if(!name){setMsg('Please write your name. 請輸入姓名。');shake($('#nm'));$('#nm').focus();return;}
-    S=fresh();S.name=name;S.seat=$('#seat').value.trim();S.grp=$('#grp').value;S.startTs=Date.now();save();tick();
+    S=fresh();S.name=name;S.seat=$('#seat').value.trim();S.grp=$('#grp').value.replace(/\D/g,'');S.startTs=Date.now();save();tick();
+    SFX.prime();SFX.ding();
     if(location.hash.slice(1)===pendingRoute)route();else location.hash=pendingRoute;
   };
   $('#go').onclick=go;onEnter($('#nm'),go);onEnter($('#seat'),go);
+  $('#test').onclick=()=>{SFX.prime();SFX.ding();setTimeout(()=>SFX.buzz(),700);if(TTS.ok)setTimeout(()=>TTS.play([{t:'Hello! Happy Halloween! Turn the lights on!',p:V.lantern.p,r:V.lantern.r}]),1300);else noVoice();};
 }
+function lampsHTML(){return `<div class="tent" aria-label="${Object.keys(S.done).length} of 5 lamps are on">${STATIONS.map(st=>`<span class="lamp${S.done[st.key]?' on':''}">🏮</span>`).join('')}</div>`;}
 function renderHome(){
-  const lockTiles=STATIONS.map(st=>{const d=S.done[st.key];return `<div class="lock${d?' on':''}"><small>Lock ${st.id}</small><b>${d?esc(d.sym):'?'}</b></div>`;}).join('');
+  const lockTiles=STATIONS.map(st=>{const d=S.done[st.key];return `<div class="lock${d?' on':''}"><small>Fuse ${st.id}</small><b>${d?esc(d.sym):'?'}</b></div>`;}).join('');
   const list=STATIONS.map(st=>{const d=S.done[st.key];return `<a class="${d?'done':''}" href="#${st.key}"><span class="e" aria-hidden="true">${st.emoji}</span>
-    <span class="t"><b>Station ${st.id}: ${esc(st.title)}</b><small>${esc(st.zh)}</small></span><span class="chk">${d?'✔ '+fmt(d.t):''}</span></a>`;}).join('');
+    <span class="t"><b>${st.id}. ${esc(st.title)}</b><small>${esc(st.zh)}</small></span><span class="chk">${d?'✔ '+fmt(d.t):''}</span></a>`;}).join('');
   const n=Object.keys(S.done).length;
   $('#view').innerHTML=`
   <div class="hero"><h1>Hello, ${esc(S.name)}!</h1>
-    <p class="note">${S.endTs?'You woke Dracula up! 🎉 Open the final lock to see your receipt.':'Scan the QR code at each station, or tap one below. 掃描各站 QR code，或直接點選。'}</p></div>
-  <div class="card"><h3>Your spell book 魔法符號</h3><div class="locks">${lockTiles}</div>
-    <p class="note">Lock 1 and Lock 6 give numbers. Lock 2 to 5 give letters. 第 1、6 站是數字，第 2～5 站是字母。</p></div>
+    <p class="note">${S.endTs?'The lights are ON! 🎉 Open the main switch to see your receipt.':'Scan the QR code at each station, or tap one below. 掃描各站 QR code，或直接點選。'}</p></div>
+  ${lampsHTML()}
+  <div class="card"><h3>Your fuse letters 保險絲字母</h3><div class="locks">${lockTiles}</div>
+    <p class="note">Each fixed fuse gives a letter. Use all 5 at the main switch. 每修好一個保險絲得到一個字母，最後在總開關使用。</p></div>
   <div class="slist">${list}
-    <a href="#final" class="${S.endTs?'done':''}"><span class="e" aria-hidden="true">🪄</span><span class="t"><b>The Final Lock</b><small>咒語（${n}/6 stations done）</small></span><span class="chk">${S.endTs?'✔':''}</span></a></div>
+    <a href="#final" class="${S.endTs?'done':''}"><span class="e" aria-hidden="true">🔦</span><span class="t"><b>The Main Switch</b><small>總開關（${n}/5 fuses fixed）</small></span><span class="chk">${S.endTs?'✔':''}</span></a></div>
   <div style="text-align:center"><button class="linkbtn" id="reset" type="button">Not you? Start over 重新開始</button></div>`;
-  $('#reset').onclick=()=>{if(confirm('Start over? Your name, time and symbols will be deleted.\n重新開始？姓名、時間和符號都會清除。')){S=fresh();save();tick();route();}};
+  $('#reset').onclick=()=>{if(confirm('Start over? Your name, time and letters will be deleted.\n重新開始？姓名、時間和字母都會清除。')){S=fresh();save();tick();route();}};
 }
 
-/* ---------- Station 1: Snooze Math (listening + time) ---------- */
+/* ---------- quiz engine for Station 1 and 5 (listen, then choose) ---------- */
+function runQuiz(st,cfg){
+  const total=cfg.items.length;
+  let queue=cfg.items.map((_,i)=>i),solved=0,cur=-1,stage=0,answered=false;
+  const mount=$(cfg.mount||'#stage');
+  mount.innerHTML=`<div class="card" id="qcard"></div>`;
+  function optionsFor(it){
+    const decoys=cfg.decoys?cfg.decoys(it):it.d;
+    return shuffle([it.a].concat(shuffle(decoys).slice(0,3)));
+  }
+  function draw(){
+    sync();
+    if(!queue.length){finishStation(st,cfg.line);$('#qcard').hidden=true;return;}
+    cur=queue.shift();stage=0;answered=false;showHint('');
+    const it=cfg.items[cur],opts=optionsFor(it);
+    const card=$('#qcard');
+    card.innerHTML=`<div class="qtop"><span>${esc(cfg.label)} ${solved+1}/${total}</span><span class="bat" id="bat">${batHTML(st.key)}</span></div>
+      ${bulbsHTML(total,solved)}
+      <div class="player"><button class="bigplay" id="qplay" type="button" aria-label="Play">▶</button>
+        <div class="playnote">${esc(cfg.playNote)}</div></div>
+      ${cfg.showQ?`<div class="qtext">${esc(it.q)}</div>`:''}
+      <div id="opts">${opts.map(o=>`<button class="opt" type="button" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+      <div class="feed" id="feed"></div>
+      <button class="btn primary block" id="next" type="button" hidden style="margin-top:10px">Next ▶ 下一題</button>`;
+    wirePlay($('#qplay'),()=>cfg.audio(it));
+    $$('.opt',card).forEach(b=>b.onclick=()=>pick(b,it));
+    $('#next').onclick=()=>{if(!answered)return;TTS.stop();draw();};
+    clearMsg();
+  }
+  function pick(b,it){
+    if(answered)return;
+    sync();if(S.lockUntil>Date.now())return;
+    answered=true;TTS.stop();
+    const good=b.dataset.o===it.a;
+    $$('.opt').forEach(o=>o.disabled=true);
+    const feed=$('#feed');
+    if(good){
+      b.classList.add('ok');SFX.ding();solved++;
+      feed.className='feed good';feed.innerHTML=`✔ ${esc(it.a)} ${it.aZh?esc(it.aZh):''}`;
+      if(cfg.sayAnswer&&TTS.ok)TTS.later(()=>TTS.play([{t:it.a,p:1,r:.8}]),350);
+    }else{
+      b.classList.add('bad');
+      const out=wrongHit(st.key);
+      queue.push(cur);
+      feed.className='feed nope';feed.textContent='✘ Not that one. Listen again later. 不是這個，等一下會再出現。';
+      shake($('#qcard'));
+    }
+    $('#next').hidden=false;
+    if(good&&!queue.length){$('#next').textContent='🔓 Finish! 完成';}
+  }
+  function hint(){
+    if(answered||cur<0)return false;
+    const it=cfg.items[cur];
+    if(stage===0){showHint('<b>Text 文字：</b>'+esc(it.src));stage=1;return true;}
+    if(stage===1){showHint('<b>Text 文字：</b>'+esc(it.src)+'<br><b>中文：</b>'+esc(it.zh));stage=2;return true;}
+    setMsg('No more help for this question. 這題沒有更多提示了。','info');return false;
+  }
+  draw();
+  return hint;
+}
+
+/* ---------- Station 1: Ghost Hotline ---------- */
 function renderS1(st){
-  const R=[
-    {emoji:'🧛',name:'Dracula',say:"Dracula's alarm goes off at six thirty. He wakes up at six forty-two.",ans:12},
-    {emoji:'🤕',name:'The mummy',say:"The mummy's alarm goes off at seven o'clock. She wakes up at seven oh six.",ans:6},
-    {emoji:'🧟',name:'The zombie',say:"The zombie's alarm goes off at five forty-five. He wakes up at five fifty.",ans:5},
-    {emoji:'👻',name:'The ghost',say:"The ghost's alarm goes off at eight o'clock. He wakes up at eight o'clock.",ans:0}
-  ];
-  const TOTAL=R.reduce((a,r)=>a+r.ans,0);
-  const body=`
-  <div class="card"><button class="btn primary block" id="playall" type="button">▶ Play all 4 播放全部</button>
-    <p class="note">Each one is read two times. 每一段唸兩次。</p></div>
-  ${R.map((r,i)=>`<div class="card sleeper" data-i="${i}"><div class="who"><span class="e" aria-hidden="true">${r.emoji}</span><b>${esc(r.name)}</b>
-      <button class="spk" type="button" data-play="${i}" aria-label="Listen to ${esc(r.name)}">🔊</button></div>
-    <div class="scratch"><span>Notes 筆記</span><input type="text" aria-label="Alarm time note" placeholder="__:__"><span>→</span><input type="text" aria-label="Wake-up time note" placeholder="__:__"></div>
-    <div class="pay"><span>Minutes late 睡過頭</span><input type="number" inputmode="numeric" min="0" max="99" aria-label="Minutes late"></div></div>`).join('')}
-  <div class="card" id="totalcard"><h3>All 4 together 全部加起來</h3>
-    <div class="pay"><span>Total minutes</span><input type="number" inputmode="numeric" min="0" max="99" id="total" aria-label="Total minutes"></div></div>
-  <button class="btn primary block" id="check" type="button">Check my answers ✔</button>`;
-  $('#view').innerHTML=frame(st,
-    `<p>Dracula's friends oversleep too! Listen. How many minutes late is each one?</p><p class="zh">聽四段話，算出每個人睡過頭幾分鐘。</p>`,
-    `聽四段話。每段話有兩個時間：<b>鬧鐘響的時間</b>和<b>醒來的時間</b>。用「醒來時間 − 鬧鐘時間」算出每個人睡過頭幾分鐘，鬼魂準時醒來就是 0。最後把四個人的分鐘加起來。可以先把時間寫在筆記格或紙上。`,body);
-  $$('[data-play]').forEach(b=>b.onclick=()=>{
-    if(b.classList.contains('speaking')){TTS.stop();return;}
-    if(!TTS.ok){noVoice();return;}
-    const s=R[+b.dataset.play].say;TTS.play([s,s],{btn:b,gap:1300,rate:0.8});
-  });
-  $('#playall').onclick=e=>{
-    const b=e.currentTarget;
-    if(b.classList.contains('speaking')){TTS.stop();return;}
-    if(!TTS.ok){noVoice();return;}
-    const items=[];R.forEach(r=>{items.push(r.say,r.say);});
-    TTS.play(items,{btn:b,gap:1300,rate:0.8});
-  };
-  const inputs=$$('.sleeper .pay input'),totalIn=$('#total');
-  const check=()=>{
-    let wrong=[],empty=0;
-    inputs.forEach((inp,i)=>{
-      const card=inp.closest('.sleeper');card.classList.remove('ok-card','bad-card');
-      const raw=inp.value.replace(/[^\d]/g,'');
-      if(raw===''){empty++;return;}
-      if(parseInt(raw,10)===R[i].ans)card.classList.add('ok-card');else{card.classList.add('bad-card');wrong.push(R[i].name);}
-    });
-    const tc=$('#totalcard');tc.classList.remove('ok-card','bad-card');
-    const tr=totalIn.value.replace(/[^\d]/g,'');
-    if(empty||tr===''){setMsg('Fill in all 5 boxes. 請填滿 5 個格子。','bad');return;}
-    if(wrong.length){setMsg('Listen again: '+wrong.join(', ')+'. Wake-up time minus alarm time. 再聽一次：醒來時間減鬧鐘時間。');shake($('.bad-card'));return;}
-    if(parseInt(tr,10)!==TOTAL){tc.classList.add('bad-card');setMsg('Each minutes box is right. Check your total. 每個人都對了，檢查一下總和。');shake(tc);return;}
-    tc.classList.add('ok-card');
-    finishStation(st,String(TOTAL),'Total minutes: the magic number for Lock 1');
-  };
-  $('#check').onclick=check;onEnter(totalIn,check);
-  showIfDone(st,'Total minutes: the magic number for Lock 1');
-  wireCommon('s1',[
-    'Each sentence has two times: when the alarm goes off, and when the person wakes up. 每句有兩個時間：鬧鐘響的時間、醒來的時間。',
-    'Write the 8 times first. Then do: wake-up time − alarm time = minutes late. 先寫下 8 個時間，再用「醒來時間 − 鬧鐘時間」。',
-    `Here are the times. 時間如下：<table><tr><td>Dracula</td><td>6:30 → 6:42</td><td>12 min</td></tr><tr><td>Mummy</td><td>7:00 → 7:06</td><td>?</td></tr><tr><td>Zombie</td><td>5:45 → 5:50</td><td>?</td></tr><tr><td>Ghost</td><td>8:00 → 8:00</td><td>?</td></tr></table>`
-  ]);
-}
-
-/* ---------- Station 2: Spell Book (listen, write on PAPER) ---------- */
-function renderS2(st){
   const W=[
-    ['straight',"Let's go straight home."],['chase','You have to chase the clock.'],['amazing','The food is amazing.'],
-    ['research','Do some research first.'],['encounter','We encounter a problem.'],['design','Please design a card.']
+    {a:'authentic',aZh:'道地的',src:'This food is made in the real, traditional way. It is not a copy.',zh:'這食物是用真正的傳統方法做的，不是仿製品。'},
+    {a:'occupy',aZh:'占據',src:'Your big boxes fill the whole room. Nobody else can use the space.',zh:'你的大箱子塞滿整個房間，別人沒辦法使用這個空間。'},
+    {a:'vehicle',aZh:'車輛',src:'A car, a bus or a truck. It carries people or things on the road.',zh:'汽車、公車或卡車，在路上載人或載貨。'},
+    {a:'pedestrian',aZh:'行人',src:'A person who walks on the street, not in a car.',zh:'走在街上的人，不是坐在車裡的人。'},
+    {a:'assistant',aZh:'助手',src:'A person who helps the boss do the job.',zh:'幫老闆做事的人。'},
+    {a:'cheerful',aZh:'興高采烈的',src:'You are happy, and you show it. You smile and laugh.',zh:'你很開心，而且表現出來，又笑又開心。'},
+    {a:'curious',aZh:'好奇的',src:'You want to know more. You ask many questions.',zh:'你想知道更多，問很多問題。'},
+    {a:'aspect',aZh:'方面',src:'One part of a thing or an idea. When you buy a house, price is one.',zh:'事物或想法的其中一部分。買房子時，價格是其中一個。'}
   ];
-  const SENT='SCARED';
-  let cur=0;const seen=new Set();
+  const ALL=W.map(w=>w.a);
   $('#view').innerHTML=frame(st,
-    `<p>Open the spell book. Listen to 6 words. <b>Write each word on your paper.</b> Then take the <b>first letter</b> of every word.</p><p class="zh">聽 6 個單字，把每個字寫在紙上，再取每個字的第一個字母。</p>`,
-    `手機會唸單字兩次，再唸一句例句。請把<b>整個單字寫在紙本聽寫單</b>上，再把 6 個單字的<b>第一個字母</b>依序輸入，會得到一個秘密單字。`,`
-  <div class="card player"><h3 id="wn">Word 1 of 6</h3>
-    <p class="note">The word is read twice, then a sentence. 唸兩次單字，再唸一句例句。</p>
-    <button class="bigplay" id="play" type="button" aria-label="Play the word">▶</button>
-    <div class="navrow"><button class="btn" id="prev" type="button">◀ Back</button><button class="btn" id="again" type="button">↻ Again</button><button class="btn" id="next" type="button">Next ▶</button></div>
-    <div class="dots" id="dots">${W.map((_,i)=>`<button type="button" data-i="${i}" aria-label="Word ${i+1}">${i+1}</button>`).join('')}</div></div>
-  <div class="card"><h3>Your 6 first letters 6 個第一個字母</h3>
-    <p class="note">Write them in order, word 1 to word 6. 依序輸入。</p>
-    <input type="text" id="ans" maxlength="12" class="letters" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="First letters" placeholder="______">
-    <button class="btn primary block" id="check" type="button" style="margin-top:10px">Check my letters ✔</button></div>`);
+    `<p>Ring, ring! Ghost guests are calling from the dark street. <b>Listen to the meaning. Choose the word.</b></p><p class="zh">鬼客從黑暗的街上打電話來。聽英文說明，選出是哪個單字。</p>`,
+    `按 ▶ 聽一段英文說明（會唸兩次），畫面<b>不會顯示文字</b>。從 4 個單字中選出正確的一個。選了就送出，不能改。<br>答錯扣 1 格電，這個單字等一下會再出現；電量用完要等 30 秒。<br>提示：第 1 次看英文文字，第 2 次再加中文。`,'');
+  if(showIfDone(st)){$('#stage').innerHTML='<div class="msg info">This fuse is fixed. 這一站已完成。</div>';wireCommon('s1');return;}
+  const hint=runQuiz(st,{
+    items:W,label:'Call',playNote:'Listen twice. 會唸兩次，可重複播放。',showQ:false,sayAnswer:true,
+    decoys:it=>ALL.filter(x=>x!==it.a),
+    audio:it=>[{ring:1}].concat(seq(it.src,'kid'),[{gapOnly:900}],seq(it.src,'kid')),
+    line:'Letter for fuse 1'
+  });
+  wireCommon('s1',hint);
+}
+
+/* ---------- Station 2: Wire Repair (dictation: fill in the missing letters) ---------- */
+function renderS2(st){
+  // h = positions (0-based) of the hidden letters
+  const W=[
+    {a:'exchange',h:[1,4,6],s:'The little ghost wants to (beep) his candy for a cookie.',zh:'小鬼想用他的糖果換一塊餅乾。'},
+    {a:'program',h:[2,4],s:'Dracula joined a night-school (beep) to learn English.',zh:'德古拉參加了夜校的課程來學英文。'},
+    {a:'explain',h:[2,5],s:"Please (beep) the rule again. I don't understand.",zh:'請再解釋一次規則，我不懂。'},
+    {a:'originate',h:[1,4,6],s:'Many ghost stories (beep) in old villages.',zh:'很多鬼故事起源於古老的村莊。'},
+    {a:'arrange',h:[2,4],s:'Uncle Lantern will (beep) a big dinner for the ghosts.',zh:'燈籠伯要為鬼客安排一頓豐盛的晚餐。'},
+    {a:'gather',h:[1,3],s:'Ghosts (beep) under the big tent at midnight.',zh:'鬼魂們在午夜聚集在大帳篷下。'}
+  ];
+  const POOL='aeioustnrlmdhcpb'.split('');
+  $('#view').innerHTML=frame(st,
+    `<p>The phone line is noisy! A <b>beep</b> hides one word in each sentence. <b>Listen. Find the hidden word. Fill in the missing letters.</b></p><p class="zh">電話線有雜音，每句話有一個單字被「嗶」蓋住。聽句子，聽出是哪個字，把缺的字母補上。</p>`,
+    `按 ▶ 聽句子（唸兩次，可重複播放），畫面<b>不會顯示句子</b>。畫面上的單字有幾個空格，從下面的字母方塊中，依照順序選出缺的字母補進去，再按「Check」送出。方塊裡有多餘的字母，不是每個都會用到。<br>拼錯扣 1 格電，這個字會晚一點再出現。<br>提示：第 1 次看句子（空格），第 2 次看中文，第 3 次幫你填好一個缺的字母。`,'');
+  if(showIfDone(st)){$('#stage').innerHTML='<div class="msg info">This fuse is fixed. 這一站已完成。</div>';wireCommon('s2');return;}
+  let queue=shuffle(W.map((_,i)=>i)),solved=0,cur=-1,stage=0,tiles=[],placed=[],miss=[],given=[],busy=false;
+  $('#stage').innerHTML='<div class="card" id="qcard"></div>';
+  function draw(){
+    sync();
+    if(!queue.length){finishStation(st,'Letter for fuse 2');$('#qcard').hidden=true;return;}
+    cur=queue.shift();stage=0;busy=false;placed=[];given=[];showHint('');clearMsg();
+    const it=W[cur],word=it.a;
+    miss=it.h.slice();
+    const decoys=shuffle(POOL.filter(c=>word.indexOf(c)<0)).slice(0,4);
+    tiles=shuffle(miss.map(i=>word[i]).concat(decoys));
+    $('#qcard').innerHTML=`<div class="qtop"><span>Word ${solved+1}/${W.length}</span><span class="bat" id="bat">${batHTML(st.key)}</span></div>
+      ${bulbsHTML(W.length,solved)}
+      <div class="player"><button class="bigplay" id="qplay" type="button" aria-label="Play">▶</button>
+        <div class="playnote">Listen for the beep. 注意聽「嗶」的地方。</div></div>
+      <div class="slots" id="slots" aria-label="Your word"></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="row2"><button class="btn" id="back" type="button">⌫ Back 刪除</button><button class="btn primary" id="check" type="button">Check ✔</button></div>
+      <div class="feed" id="feed"></div>
+      <button class="btn primary block" id="next" type="button" hidden style="margin-top:10px">Next ▶ 下一個</button>`;
+    wirePlay($('#qplay'),()=>seq(it.s,'kid').concat([{gapOnly:900}],seq(it.s,'kid')));
+    $('#back').onclick=()=>{if(busy)return;placed.pop();paint();};
+    $('#check').onclick=check;
+    $('#next').onclick=()=>{if(!busy)return;TTS.stop();draw();};
+    paint();
+  }
   function paint(){
-    $('#wn').textContent='Word '+(cur+1)+' of 6';
-    $$('#dots button').forEach((b,i)=>{b.classList.toggle('cur',i===cur);b.classList.toggle('seen',seen.has(i)&&i!==cur);});
+    const word=W[cur].a;
+    $('#slots').innerHTML=word.split('').map((ch,i)=>{
+      if(given.indexOf(i)>=0)return `<div class="slot f given">${esc(ch)}</div>`;
+      const k=miss.indexOf(i);
+      if(k<0)return `<div class="slot vis">${esc(ch)}</div>`;
+      return `<div class="slot${placed[k]!=null?' f':''}">${placed[k]!=null?esc(tiles[placed[k]]):''}</div>`;
+    }).join('');
+    $('#tiles').innerHTML=tiles.map((c,i)=>`<button class="tile" type="button" data-i="${i}" ${placed.indexOf(i)>=0||busy?'disabled':''}>${esc(c)}</button>`).join('');
+    $$('.tile').forEach(b=>b.onclick=()=>{if(busy)return;if(placed.length>=miss.length)return;placed.push(+b.dataset.i);paint();});
   }
-  function playCur(){
-    if(!TTS.ok){noVoice();return;}
-    seen.add(cur);paint();
-    TTS.play([W[cur][0],W[cur][0],W[cur][1]],{btn:$('#play'),gap:1300,rate:0.8});
+  function check(){
+    if(busy)return;
+    sync();if(S.lockUntil>Date.now())return;
+    const it=W[cur],word=it.a;
+    if(placed.length<miss.length){setMsg('Fill all the empty boxes. 空格都要填滿。','bad');shake($('#slots'));return;}
+    busy=true;TTS.stop();
+    const letters=word.split('');
+    miss.forEach((pos,k)=>{letters[pos]=tiles[placed[k]];});
+    given.forEach(pos=>{letters[pos]=word[pos];});
+    const feed=$('#feed');
+    if(letters.join('')===word){
+      SFX.ding();solved++;
+      feed.className='feed good';feed.innerHTML='✔ '+esc(word)+'<br><span class="note">'+esc(it.s.replace('(beep)',word))+'</span>';
+      if(TTS.ok)TTS.later(()=>TTS.play([{t:word,p:1,r:.8}]),350);
+      $('#next').hidden=false;
+      if(!queue.length)$('#next').textContent='🔓 Finish! 完成';
+    }else{
+      wrongHit(st.key);queue.push(cur);
+      feed.className='feed nope';feed.textContent='✘ Not right. This word will come back later. 拼錯了，晚一點會再出現。';
+      shake($('#qcard'));
+      $('#next').hidden=false;
+    }
+    $('#check').disabled=true;$('#back').disabled=true;paint();
   }
-  $('#play').onclick=()=>{if($('#play').classList.contains('speaking')){TTS.stop();return;}playCur();};
-  $('#again').onclick=playCur;
-  $('#next').onclick=()=>{cur=Math.min(W.length-1,cur+1);playCur();};
-  $('#prev').onclick=()=>{cur=Math.max(0,cur-1);playCur();};
-  $('#dots').onclick=e=>{const b=e.target.closest('button[data-i]');if(!b)return;cur=+b.dataset.i;playCur();};
-  paint();
-  const check=()=>{
-    const v=$('#ans').value.replace(/[^a-z]/gi,'').toUpperCase();
-    if(!v){setMsg('Write your 6 letters. 請輸入 6 個字母。');return;}
-    if(v.length!==6){setMsg('You need 6 letters, one for each word. You wrote '+v.length+'. 需要 6 個字母。');shake($('#ans'));return;}
-    const wrong=[];for(let i=0;i<6;i++)if(v[i]!==SENT[i])wrong.push(i+1);
-    if(wrong.length){setMsg('Check word '+wrong.join(', ')+'. Listen again and check the spelling on your paper. 再聽一次，檢查紙上的拼字。');shake($('#ans'));return;}
-    finishStation(st,'A','SCARED: the 3rd letter is the magic letter for Lock 2');
-  };
-  $('#check').onclick=check;onEnter($('#ans'),check);
-  showIfDone(st,'SCARED: the 3rd letter is the magic letter for Lock 2');
-  wireCommon('s2',[
-    'Play the word again. Clap the parts: re-search, en-coun-ter, a-maz-ing. 重播並拍手分音節：re-search、en-coun-ter、a-maz-ing。',
-    'Number of letters 字母數：1 straight (8)、2 chase (5)、3 amazing (7)、4 research (8)、5 encounter (9)、6 design (6)。',
-    'The secret word has 6 letters. It starts with SC. It is how you feel in a haunted house! 秘密單字有 6 個字母，開頭是 SC，是在鬼屋裡的感覺！'
-  ]);
-}
-
-/* ---------- generic "pick the answer, take a letter" station (3, 4, 5) ---------- */
-function renderPicker(st,cfg){
-  const cards=cfg.items.map((it,i)=>`<div class="card pick" data-i="${i}"><h3>${cfg.itemWord} ${i+1}</h3><p>${it.q}</p>
-    <span class="tag">${it.pos?'Take the '+ord(it.pos)+' letter → Box '+it.box:'Bonus: no letter 這題不用取字母'}</span>
-    <label class="field"><span>My answer 我的答案</span><select aria-label="Answer ${i+1}"><option value="">— choose 選擇 —</option>${it.opts.map(w=>`<option value="${esc(w)}">${esc(w)}</option>`).join('')}</select></label>
-    <div class="got" hidden></div></div>`).join('');
-  const bank=cfg.bank?`<div class="card"><h3>${cfg.bankTitle}</h3><div class="bank">${cfg.bank.map(w=>`<span>${esc(w)}</span>`).join('')}</div><p class="note">${cfg.bankNote}</p></div>`:'';
-  const boxes=Array.from({length:cfg.boxN},(_,k)=>`<div data-b="${k+1}"><small>Box ${k+1}</small><b>&nbsp;</b></div>`).join('');
-  $('#view').innerHTML=frame(st,cfg.intro,cfg.zh,`${bank}
-  <div class="card"><h3>Secret boxes 秘密格子</h3><div class="boxes" id="boxes" style="--n:${cfg.boxN}">${boxes}</div></div>
-  ${cards}
-  <div class="card"><h3>The secret word 秘密單字</h3><p>Read Box 1 to Box ${cfg.boxN}. Write the word. 依序讀出格子裡的字母。</p>
-    <input type="text" id="secret" maxlength="12" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Secret word" placeholder="${'_'.repeat(cfg.boxN)}">
-    <button class="btn primary block" id="check" type="button" style="margin-top:10px">Check the secret word ✔</button></div>`);
-  const boxLetters={};
-  $$('.pick').forEach(card=>{
-    const i=+card.dataset.i,it=cfg.items[i],sel=card.querySelector('select'),got=card.querySelector('.got');
-    sel.onchange=()=>{
-      card.classList.remove('ok-card','bad-card');got.hidden=true;
-      if(it.box){delete boxLetters[it.box];const bx=$(`#boxes [data-b="${it.box}"]`);bx.classList.remove('on');bx.querySelector('b').innerHTML='&nbsp;';}
-      if(!sel.value){clearMsg();return;}
-      if(sel.value!==it.ans){card.classList.add('bad-card');setMsg(cfg.itemWord+' '+(i+1)+' is not “'+sel.value+'”. '+cfg.wrongTip);shake(card);return;}
-      card.classList.add('ok-card');clearMsg();got.hidden=false;
-      if(it.pos){
-        const L=nth(it.ans,it.pos);boxLetters[it.box]=L;
-        const bx=$(`#boxes [data-b="${it.box}"]`);bx.classList.add('on');bx.querySelector('b').textContent=L;
-        got.innerHTML=highlight(it.ans,it.pos)+' → Box '+it.box;
-      }else got.textContent=it.ans+' ✔';
-    };
+  draw();
+  wireCommon('s2',()=>{
+    if(busy||cur<0)return false;
+    const it=W[cur];
+    if(stage===0){showHint('<b>Sentence 句子：</b>'+esc(it.s.replace('(beep)','_____')));stage=1;return true;}
+    if(stage===1){showHint('<b>Sentence 句子：</b>'+esc(it.s.replace('(beep)','_____'))+'<br><b>中文：</b>'+esc(it.zh));stage=2;return true;}
+    if(stage===2&&miss.length>1){
+      // fill in the first missing letter for the student
+      const pos=miss.shift();given.push(pos);placed=[];
+      const ix=tiles.indexOf(it.a[pos]);if(ix>=0)tiles.splice(ix,1);
+      paint();stage=3;
+      showHint('<b>Sentence 句子：</b>'+esc(it.s.replace('(beep)','_____'))+'<br><b>中文：</b>'+esc(it.zh)+'<br>One letter is filled in for you. 已幫你填好一個字母。');
+      return true;
+    }
+    setMsg('No more help for this word. 這個字沒有更多提示了。','info');return false;
   });
-  const check=()=>{
-    const v=$('#secret').value.replace(/[^a-z]/gi,'').toUpperCase();
-    if(!v){setMsg('Write the secret word. 請輸入秘密單字。');return;}
-    if(Object.keys(boxLetters).length<cfg.boxN){setMsg('Some boxes are empty. Choose the right answers first. 還有格子是空的。');shake($('#boxes'));return;}
-    if(v!==cfg.secret){setMsg('Not yet. Read Box 1 to Box '+cfg.boxN+' in order. 依序讀出格子。');shake($('#secret'));return;}
-    finishStation(st,cfg.sym,cfg.line);
-  };
-  $('#check').onclick=check;onEnter($('#secret'),check);
-  showIfDone(st,cfg.line);
-  wireCommon(st.key,cfg.hints);
 }
 
-/* ---------- Station 3: Phrase Lock ---------- */
+/* ---------- Station 3: Tent Crew (listen, then put the cards in order) ---------- */
 function renderS3(st){
-  const P=['get out of','go off','in advance','in order to','on time','take action','wake up'];
-  const it=(q,ans,pos,box)=>({q,ans,pos,box,opts:P});
-  renderPicker(st,{
-    itemWord:'Sentence',intro:`<p>The Phrase Lock has 7 sentences. Put the right phrase in each one.</p><p class="zh">每句話填入正確的片語。</p>`,
-    zh:`每句話選一個片語填入，<b>每個片語只用一次</b>。答對後，照標示取出指定位置的字母放進格子（空格不算），讀出秘密單字。`,
-    bank:P,bankTitle:'Phrase bank 片語庫',bankNote:'Each phrase is used once. 每個片語只用一次。',
-    items:[
-      it('Dracula sleeps all day. He must ______ before the party at midnight.','wake up',1,1),
-      it('Tocky is a magic clock. It will ______ at six o\'clock.','go off',2,2),
-      it('The witch flew very fast ______ get to the party.','in order to',4,3),
-      it('A ghost is in the kitchen! We must ______ now.','take action',3,4),
-      it('The party is very popular. Buy tickets ______.','in advance',1,5),
-      it('The zombie came to class ______. He was not late.','on time',2,6),
-      it('It is too scary in here. Let\'s ______ the haunted house!','get out of',1,7)
-    ],
-    boxN:7,secret:'WORKING',sym:'K',line:'WORKING: the 4th letter is the magic letter for Lock 3',
-    wrongTip:'Think about the meaning. 想想意思。',
-    hints:[
-      '<b>Meanings 意思：</b>get out of 離開｜go off 響（鬧鐘）｜in advance 事先｜in order to 為了｜on time 準時｜take action 採取行動｜wake up 醒來',
-      'Start with the easiest sentence (Sentence 6: not late). Cross out the phrases you already used. 先做最簡單的第 6 句（沒遲到），用過的片語劃掉。',
-      'Answers 答案：Sentence 1 = wake up、Sentence 4 = take action、Sentence 6 = on time。The secret word is something you do at a job: W _ R K _ _ G. 秘密單字是工作時做的事：W _ R K _ _ G。'
-    ]
-  });
-}
-
-/* ---------- Station 4: Who Am I? ---------- */
-function renderS4(st){
-  const B=['alarm','amazing','design','encounter','invent','oversleep','particular','position','promise','regular','research'];
-  const it=(q,ans,pos,box)=>({q,ans,pos,box,opts:B});
-  renderPicker(st,{
-    itemWord:'Riddle',intro:`<p>The ghost library asks 9 riddles. Choose the right word for each one.</p><p class="zh">幽靈圖書館有 9 個謎語，選出正確的單字。</p>`,
-    zh:`讀英文謎語，從單字庫選出答案（有 2 個單字用不到）。有標示的謎語，取指定位置的字母放進格子，讀出秘密單字。`,
-    bank:B,bankTitle:'Word bank 單字庫',bankNote:'2 words are not used. 有 2 個字用不到。',
-    items:[
-      it('A clock that wakes people up by making loud sounds.','alarm',2,3),
-      it('To sleep longer than you planned to.','oversleep',1,2),
-      it('The act of studying to learn more facts about something.','research',2,5),
-      it('To make a totally new thing.','invent',3,4),
-      it('To put something in a certain place.','position',3,1),
-      it('Common, not special. “Jessica likes ______ cow’s milk.”','regular',0,0),
-      it('To tell someone you will certainly do something. “John ______ he would finish the job.”','promise',0,0),
-      it('This one, not any other. “My mother likes this ______ shampoo.”','particular',0,0),
-      it('Very surprising or impressive. “The food is ______.”','amazing',0,0)
-    ].map(x=>x.pos?x:{q:x.q,ans:x.ans,opts:x.opts}),
-    boxN:5,secret:'SOLVE',sym:'E',line:'SOLVE: the last letter is the magic letter for Lock 4',
-    wrongTip:'Read the riddle again. 再讀一次。',
-    hints:[
-      '<b>Meanings 意思：</b>alarm 鬧鐘｜amazing 令人驚奇的｜design 設計｜encounter 遭遇｜invent 發明｜oversleep 睡過頭｜particular 特定的｜position 擺放｜promise 承諾｜regular 一般的｜research 研究',
-      'First letters 第一個字母：1 a…、2 o…、3 r…、4 i…、5 p…、6 r…、7 p…、8 p…、9 a…',
-      'Boxes 1 to 5 make a word. It means “fix a problem”: S _ L _ E. 5 個格子組成的字意思是「解決問題」：S _ L _ E。'
-    ]
-  });
-}
-
-/* ---------- Station 5: Word Family Cauldron ---------- */
-function renderS5(st){
-  renderPicker(st,{
-    itemWord:'Sentence',intro:`<p>Stir the cauldron! Choose the right word form for each sentence.</p><p class="zh">選出正確的詞性（名詞、動詞、形容詞）。</p>`,
-    zh:`每句選出<b>形式正確</b>的字（名詞、動詞或形容詞）。有標示的取指定位置的字母放進格子，讀出秘密單字。`,
-    items:[
-      {q:'We need a ______ to this problem.',ans:'solution',pos:4,box:1,opts:['solve','solution']},
-      {q:'The ______ of Tocky always overslept.',ans:'inventor',pos:2,box:2,opts:['inventor','invent']},
-      {q:'Dracula is very ______. He makes a new costume every day.',ans:'creative',pos:6,box:3,opts:['create','creative']},
-      {q:'Can you ______ a better clock?',ans:'invent',pos:6,box:4,opts:['inventor','invent']},
-      {q:'Can you ______ the problem?',ans:'solve',pos:5,box:5,opts:['solution','solve']},
-      {q:'Tocky is not a ______ clock. It runs away!',ans:'regular',opts:['irregular','regular']}
-    ],
-    boxN:5,secret:'UNITE',sym:'U',line:'UNITE: the 1st letter is the magic letter for Lock 5',
-    wrongTip:'Check the word before the blank. 看看空格前面的字。',
-    hints:[
-      '<b>Rules 規則：</b>a / the / my + noun 名詞｜to / can + verb 動詞｜is / very + adjective 形容詞',
-      '<b>Meanings 意思：</b>solve 解決（動詞）｜solution 解決辦法（名詞）｜invent 發明（動詞）｜inventor 發明者（名詞）｜create 創造（動詞）｜creative 有創造力的（形容詞）｜regular 一般的（形容詞）',
-      'Answers 答案：Sentence 1 = solution、Sentence 2 = inventor。The secret word means “put together”: U _ _ _ _. 秘密單字的意思是「團結在一起」：U _ _ _ _。'
-    ]
-  });
-}
-
-/* ---------- Station 6: Tocky or Ramos? ---------- */
-function renderS6(st){
-  const S6=[
-    ['It has three parts: a clock, a beacon, and an app.','R',3],['It is ball-shaped.','T',2],['You have to get out of bed.','B',1],
-    ['It jumps off the table.','T',3],['You position the beacon far from your bedroom.','R',4],['It makes a lot of noise and runs around.','T',1],
-    ['You hold your phone near the beacon to stop the alarm.','R',2],['Its inventor always overslept.','B',4],['You have to chase it.','T',2],
-    ['You can set a code in advance.','R',5],['It promises you will get up on time.','T',2],['It was designed to wake you up in a different way.','R',2]
-  ].map(x=>({t:x[0],k:x[1],g:x[2]}));
-  const SUM=S6.filter(x=>x.k==='R').reduce((a,x)=>a+x.g,0);
-  const rows=S6.map((x,i)=>`<div class="srow" data-i="${i}"><div class="top2">
-      <button class="spk" type="button" data-say="${esc(x.t)}" aria-label="Listen to sentence ${i+1}">🔊</button>
-      <span class="txt"><b>${i+1}.</b> ${esc(x.t)}</span><span class="gem">💎 ${x.g}</span></div>
-    <div class="seg" role="group" aria-label="Who is sentence ${i+1} about?">
-      <button type="button" data-v="T" aria-pressed="false">🏃 Tocky</button>
-      <button type="button" data-v="R" aria-pressed="false">📡 Ramos</button>
-      <button type="button" data-v="B" aria-pressed="false">⚖️ Both</button></div></div>`).join('');
+  const R=[
+    {voice:'chef',title:'Round 1: Set up the party 搭棚',
+     script:['Welcome, my friends!',"Tonight's big event will take place on our street.",'First, Uncle Lantern invites the whole neighborhood.','Next, we put up a large tent.','Then the neighbors bring tables and chairs.','After that, the cooks make the food.','Finally, the guests sit down, and the party begins!'],
+     zh:'歡迎大家！今晚的大事要在我們這條街舉行。首先，燈籠伯邀請整個社區。接著，我們搭起大帳篷。然後鄰居搬來桌椅。之後，廚師做菜。最後，客人坐下，派對開始！',
+     cards:['Invite the whole neighborhood to the event.','Put up the tent.','Bring tables and chairs.','Cook the food.','The guests sit down.']},
+    {voice:'granny',title:'Round 2: How did it start? 辦桌怎麼來的',
+     script:['Do you know how ban-doh first came about?','Long ago, a farmer wanted to celebrate.','First, he asked the neighbors for help.','Then everyone cooked together.','After that, they ate dinner.','Next, the farmer handed out torches.','Finally, the guests walked home with bags of leftovers.'],
+     zh:'你知道辦桌最早是怎麼來的嗎？很久以前，有個農夫想慶祝。首先，他請鄰居幫忙。接著大家一起煮菜。然後一起吃晚餐。接下來農夫分發火把。最後客人帶著菜尾走路回家。',
+     cards:['The farmer asks the neighbors for help.','Everyone cooks together.','Everyone eats dinner.','The farmer hands out torches.','The guests walk home with leftovers.']}
+  ];
   $('#view').innerHTML=frame(st,
-    `<p>Two clocks are in the haunted house! Read the sentences. Which clock is it?</p><p class="zh">讀句子，判斷是哪一個鬧鐘。</p>`,
-    `判斷每句話說的是 <b>Tocky</b>、<b>Ramos</b>，還是<b>兩個都是（Both）</b>。全部分對後，只把 <b>Ramos 專屬</b>句子旁的寶石數字加起來。Both 的句子不算。`,`
-  <div class="card"><h3>Two clocks 兩個鬧鐘</h3>
-    <p>🏃 <b>Tocky</b>: the clock that runs away.</p><p>📡 <b>Ramos</b>: the clock with a beacon and a code.</p>
-    <p class="note">Tap 🔊 to listen to a sentence. 點 🔊 聽句子。</p></div>
-  <div class="card" id="sortcard"><h3>Read and sort 閱讀並分類</h3><div id="rows">${rows}</div>
-    <button class="btn primary block" id="check" type="button">Check my groups ✔</button></div>
-  <div class="card" id="sumcard" hidden><h3>Add the gems 💎</h3>
-    <p>Add the gems of the 📡 <b>Ramos</b> sentences only. 只把 📡 Ramos 專屬句子的寶石加起來。</p>
-    <div class="pay"><span>Total 💎</span><input type="number" inputmode="numeric" min="0" max="99" id="sum" aria-label="Total gems"></div>
-    <button class="btn primary block" id="sumcheck" type="button" style="margin-top:10px">Check the total ✔</button></div>`);
-  const pick={};
-  $$('.srow').forEach(r=>{
-    r.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{
-      pick[r.dataset.i]=b.dataset.v;
-      r.querySelectorAll('.seg button').forEach(o=>o.setAttribute('aria-pressed',String(o===b)));
-      r.classList.remove('ok','bad');
-    });
+    `<p>Chef Ghost is shouting the work order in the dark! <b>Listen. Put the 5 cards in the right order.</b></p><p class="zh">廚師鬼在黑暗中大聲喊工作流程。聽完後，把 5 張卡片排成正確的順序。</p>`,
+    `共 2 回合。按 ▶ 聽一段流程（可重複播放）。點下面的卡片，依序放進 1～5 的格子；點格子裡的卡片可以拿回來。排好 5 張後按「Check」。<br>系統只會告訴你「有幾張位置正確」，不會告訴你是哪幾張。<br>每次送出錯誤扣 1 格電。提示：第 1 次看英文文字，第 2 次再加中文。`,'');
+  if(showIfDone(st)){$('#stage').innerHTML='<div class="msg info">This fuse is fixed. 這一站已完成。</div>';wireCommon('s3');return;}
+  let round=0,order=[],slots=[],stage=0,busy=false;
+  $('#stage').innerHTML='<div class="card" id="qcard"></div>';
+  function draw(){
+    sync();
+    const r=R[round];stage=0;busy=false;slots=[];showHint('');clearMsg();
+    order=shuffle(r.cards.map((_,i)=>i));
+    $('#qcard').innerHTML=`<div class="qtop"><span>${esc(r.title)}</span><span class="bat" id="bat">${batHTML(st.key)}</span></div>
+      ${bulbsHTML(R.length,round)}
+      <div class="player"><button class="bigplay" id="qplay" type="button" aria-label="Play">▶</button>
+        <div class="playnote">Listen to the work order. 聽工作流程。</div></div>
+      <h3 style="margin-top:12px">Your order 你的順序</h3><div id="slots"></div>
+      <h3 style="margin-top:12px">Cards 卡片</h3><div class="ordcards" id="cards"></div>
+      <div class="row2"><button class="btn" id="clear" type="button">↺ Clear 清除</button><button class="btn primary" id="check" type="button">Check ✔</button></div>
+      <div class="feed" id="feed"></div>`;
+    const items=[];r.script.forEach((s,i)=>{seq(s,r.voice).forEach(x=>items.push(x));});
+    wirePlay($('#qplay'),()=>items,{gap:550});
+    $('#clear').onclick=()=>{if(busy)return;slots=[];paint();};
+    $('#check').onclick=check;
+    paint();
+  }
+  function paint(){
+    const r=R[round];
+    $('#slots').innerHTML=r.cards.map((_,i)=>{const c=slots[i];return `<div class="ordslot${c!=null?' f':''}" data-s="${i}"><b>${i+1}</b><span>${c!=null?esc(r.cards[c]):''}</span></div>`;}).join('');
+    $('#cards').innerHTML=order.map(ci=>`<button type="button" data-c="${ci}" ${slots.indexOf(ci)>=0?'disabled':''}>${esc(r.cards[ci])}</button>`).join('');
+    $$('#cards button').forEach(b=>b.onclick=()=>{if(busy)return;if(slots.length>=r.cards.length)return;slots.push(+b.dataset.c);paint();});
+    $$('.ordslot.f').forEach(s=>s.onclick=()=>{if(busy)return;slots.splice(+s.dataset.s,1);paint();});
+  }
+  function check(){
+    if(busy)return;
+    sync();if(S.lockUntil>Date.now())return;
+    const r=R[round];
+    if(slots.length<r.cards.length){setMsg('Put all 5 cards in the boxes. 5 張卡片都要放進格子。','bad');shake($('#slots'));return;}
+    const right=slots.filter((c,i)=>c===i).length;
+    const feed=$('#feed');
+    if(right===r.cards.length){
+      busy=true;TTS.stop();SFX.ding();
+      feed.className='feed good';feed.textContent='✔ 5/5 in the right place! 全部正確！';
+      if(round===R.length-1){setTimeout(()=>{finishStation(st,'Letter for fuse 3');$('#qcard').hidden=true;},900);}
+      else{
+        const nb=document.createElement('button');nb.className='btn primary block';nb.style.marginTop='10px';nb.textContent='Next round ▶ 下一回合';
+        nb.onclick=()=>{round++;draw();};feed.after(nb);
+      }
+    }else{
+      TTS.stop();wrongHit(st.key);
+      feed.className='feed nope';feed.textContent='✘ '+right+'/5 cards are in the right place. Listen again. 有 '+right+' 張位置正確，再聽一次。';
+      shake($('#qcard'));
+    }
+  }
+  draw();
+  wireCommon('s3',()=>{
+    if(busy)return false;
+    const r=R[round],txt=r.script.map(esc).join(' ');
+    if(stage===0){showHint('<b>Text 文字：</b>'+txt);stage=1;return true;}
+    if(stage===1){showHint('<b>Text 文字：</b>'+txt+'<br><b>中文：</b>'+esc(r.zh));stage=2;return true;}
+    setMsg('No more help in this round. 這一回合沒有更多提示了。','info');return false;
   });
-  $('#check').onclick=()=>{
-    const left=S6.length-Object.keys(pick).length;
-    if(left){setMsg('Sort all 12 sentences. 還有 '+left+' 句沒選。');return;}
-    let bad=0;
-    $$('.srow').forEach(r=>{const good=pick[r.dataset.i]===S6[r.dataset.i].k;r.classList.toggle('ok',good);r.classList.toggle('bad',!good);if(!good)bad++;});
-    if(bad){setMsg(bad+' sentence'+(bad>1?'s are':' is')+' wrong (red). Read again. 紅色框的再讀一次。');shake($('.srow.bad'));return;}
-    setMsg('All sorted! Now add the gems of the 📡 Ramos sentences. 分類全對！','info');
-    $('#check').hidden=true;
-    $$('.srow').forEach(r=>r.classList.add('show'));
-    $('#sumcard').hidden=false;
-  };
-  const sumcheck=()=>{
-    const v=parseInt($('#sum').value,10);
-    if(isNaN(v)){setMsg('Write the total. 請寫出總和。');return;}
-    if(v!==SUM){setMsg('Not yet. Add only the 📡 Ramos sentences. “Both” does not count. 只加 Ramos 專屬的，Both 不算。');shake($('#sum'));return;}
-    finishStation(st,String(SUM),'Total gems: the magic number for Lock 6');
-  };
-  $('#sumcheck').onclick=sumcheck;onEnter($('#sum'),sumcheck);
-  showIfDone(st,'Total gems: the magic number for Lock 6');
-  wireCommon('s6',[
-    'Tocky is a ball clock that jumps and runs away. Ramos has a beacon, an app and a code. “Both” means the sentence is true for both clocks. Tocky 是會跳會跑的球；Ramos 有訊號傳送器、App 和密碼；Both 是兩個都對。',
-    '<b>Tocky:</b> ball, jump, noise, run, chase, promise。<b>Ramos:</b> three parts, beacon, position, phone, code, designed。',
-    '5 sentences are for Ramos only. Add only their gems. “Both” sentences do not count. 有 5 句是 Ramos 專屬，只加它們的數字，Both 不算。'
-  ]);
 }
 
-/* ---------- The Final Lock + receipt ---------- */
+/* ---------- Station 4: Walkie-Talkie (two phones, one listens, one chooses) ---------- */
+const ZH4={'take part in':'參加',"open one's eyes":'大開眼界','take place':'舉行','highlight':'亮點','spirit':'精神','remain':'繼續存在','hand out':'分發','come about':'產生','put up':'搭建','aspect':'方面','occupy':'占據','assistant':'助手','program':'計畫','gather':'聚集','explain':'解釋','pedestrian':'行人','vehicle':'車輛','cheerful':'興高采烈的'};
+const P4=[
+  {a:'take part in',s:'Ghosts love parties. They always (beep) the dance contest.',f:'Ghosts love parties. They always take part in the dance contest.',zh:'鬼魂愛派對，他們總是參加舞蹈比賽。',d:['hand out','put up','take place']},
+  {a:"open one's eyes",s:'A trip to Taiwan can (beep). You see new things.',f:'A trip to Taiwan can open your eyes. You see new things.',zh:'去臺灣旅行可以讓你大開眼界，你會看到新東西。',d:['take part in','come about','put up']},
+  {a:'take place',s:'The Halloween party will (beep) on Friday night.',f:'The Halloween party will take place on Friday night.',zh:'萬聖節派對將在星期五晚上舉行。',d:['hand out','put up','take part in']},
+  {a:'highlight',s:'The best part of the night, the (beep), was the dance.',f:'The best part of the night, the highlight, was the dance.',zh:'今晚最棒的部分，也就是亮點，是舞蹈。',d:['aspect','spirit','program']},
+  {a:'spirit',s:'Everyone has the Halloween (beep). They laugh together.',f:'Everyone has the Halloween spirit. They laugh together.',zh:'大家都有萬聖節的精神，一起歡笑。',d:['highlight','aspect','program']},
+  {a:'remain',s:'After the party, only candy wrappers (beep) on the floor.',f:'After the party, only candy wrappers remain on the floor.',zh:'派對後，只剩下糖果紙留在地上。',d:['gather','explain','occupy']},
+  {a:'hand out',s:'The ghost will (beep) torches to every guest.',f:'The ghost will hand out torches to every guest.',zh:'鬼魂會發火把給每位客人。',d:['take part in','put up','come about']},
+  {a:'come about',s:'How did this strange tradition (beep)?',f:'How did this strange tradition come about?',zh:'這個奇怪的傳統是怎麼產生的？',d:['put up','hand out','take part in']}
+];
+const P4R=[
+  {a:'put up',s:'Please help me (beep) the big tent.',f:'Please help me put up the big tent.',zh:'請幫我搭起大帳篷。',d:['take place','hand out','take part in']},
+  {a:'aspect',s:'Price is an important (beep) when you buy a house.',f:'Price is an important aspect when you buy a house.',zh:'買房子時，價格是很重要的一個方面。',d:['highlight','spirit','program']},
+  {a:'occupy',s:'Too many boxes (beep) the whole room.',f:'Too many boxes occupy the whole room.',zh:'太多箱子占滿了整個房間。',d:['gather','remain','explain']},
+  {a:'assistant',s:'The chef has a new (beep). He helps in the kitchen.',f:'The chef has a new assistant. He helps in the kitchen.',zh:'廚師有一位新助手，他在廚房幫忙。',d:['pedestrian','vehicle','cheerful']}
+];
+const NEED4=4; // correct answers each person needs
+const ROLES=['A','B','C'];
+const CODECH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function p4item(g,n){ // same for everyone in the same group
+  const cyc=Math.floor(n/12),k=n%12;
+  if(cyc===0){
+    if(k<8)return P4[shuffle(P4.map((_,i)=>i),rng(hashStr('m'+g)))[k]];
+    return P4R[shuffle(P4R.map((_,i)=>i),rng(hashStr('r'+g)))[k-8]];
+  }
+  const all=P4.concat(P4R);
+  return all[shuffle(all.map((_,i)=>i),rng(hashStr('c'+cyc+'|'+g)))[k]];
+}
+function p4code(P,n){const h=hashStr(P.g+'|'+P.size+'|'+n);return CODECH[h%32]+CODECH[(h>>>5)%32];}
+
+function renderS4(st){
+  sync();
+  $('#view').innerHTML=frame(st,
+    `<p>Two walkie-talkies! <b>One friend listens. The other friend chooses.</b> The listener tells the story in English. Then you switch.</p><p class="zh">兩支對講機！一人聽、一人選，聽的人用英文把聽到的告訴搭檔，每一輪換角色。</p>`,
+    `<b>兩人一組（或三人一組）。</b>先輸入組號、組內人數和自己的字母（A／B／C），由老師分配。<br>每一輪：<b>聽的人</b>按 ▶ 聽一句話，句子裡有一個「嗶」蓋住的單字／片語，用英文把聽到的內容告訴搭檔，<b>不可以給搭檔看畫面</b>。<b>選的人</b>只看得到 4 個選項，向搭檔問問題，選出被蓋住的字。選了就送出。<br>兩邊畫面的「代碼」要一樣，代表你們在同一輪。每人要答對 ${NEED4} 題。<br>答錯扣 1 格電；電量用完要等 30 秒。提示：聽的人可看英文文字（再加中文）；選的人可劃掉 1 個錯誤選項（最多劃掉 2 個）。`,'');
+  let hs=0;
+  const P=()=>S.pair;
+  function setup(){
+    sync();
+    const g0=(P()&&P().g)||S.grp||'',sz0=(P()&&P().size)||2,r0=(P()&&P().role)||'A';
+    $('#stage').innerHTML=`<div class="card"><h3>Set up your team 設定你的小組</h3>
+      <p class="note">Your teacher gives you a group number and a letter. Both phones must use the same group number. 老師會告訴你組號和字母，同組兩支手機組號要一樣。</p>
+      <label class="field"><span>Group number 組號</span><input type="tel" id="pg" maxlength="3" autocomplete="off" value="${esc(g0)}" placeholder="e.g. 3"></label>
+      <div class="field"><span>How many people in your group? 組內幾人？</span><div class="seg" id="psize"><button type="button" data-v="2">2</button><button type="button" data-v="3">3</button></div></div>
+      <div class="field"><span>You are… 你是…</span><div class="seg" id="prole"><button type="button" data-v="A">A</button><button type="button" data-v="B">B</button><button type="button" data-v="C">C</button></div></div>
+      <button class="btn primary block" id="pgo" type="button">Start 開始</button></div>`;
+    let size=sz0,role=r0;
+    const paint=()=>{
+      $$('#psize button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===size)));
+      $$('#prole button').forEach(b=>{const ok=ROLES.indexOf(b.dataset.v)<size;b.disabled=!ok;b.style.opacity=ok?1:.3;b.setAttribute('aria-pressed',String(b.dataset.v===role&&ok));});
+    };
+    $$('#psize button').forEach(b=>b.onclick=()=>{size=+b.dataset.v;if(ROLES.indexOf(role)>=size)role='A';paint();});
+    $$('#prole button').forEach(b=>b.onclick=()=>{role=b.dataset.v;paint();});
+    paint();
+    $('#pgo').onclick=()=>{
+      const g=$('#pg').value.replace(/\D/g,'');
+      if(!g){setMsg('Write your group number. 請輸入組號。');shake($('#pg'));return;}
+      sync();S.pair={g:g,size:size,role:role,n:0,ok:0,res:null};save();clearMsg();play();
+    };
+  }
+  function play(){
+    sync();hs=0;showHint('');clearMsg();
+    const p=P();if(!p){setup();return;}
+    const it=p4item(p.g,p.n),roles=ROLES.slice(0,p.size),listener=roles[p.n%p.size];
+    const iListen=p.role===listener;
+    const code=p4code(p,p.n);
+    const head=`<div class="qtop"><span>Round ${p.n+1} · code <span class="code">${code}</span></span><span class="bat" id="bat">${batHTML(st.key)}</span></div>
+      <div class="note">Group ${esc(p.g)} · You are <b>${p.role}</b> · Score ${Math.min(p.ok,NEED4)}/${NEED4}</div>`;
+    const sync4=`<details style="margin-top:12px"><summary class="note">Out of sync? 兩邊代碼不一樣？</summary>
+      <div class="pay" style="display:flex;gap:8px;margin-top:6px"><input type="tel" id="rn" maxlength="3" placeholder="Round number 輪數" aria-label="Round number"><button class="btn" id="rgo" type="button">Set 設定</button></div>
+      <button class="linkbtn" id="chg" type="button">Change group or letter 更改組別或字母</button></details>`;
+    let body='';
+    if(iListen){
+      body=`${head}
+        <div class="who"><span class="e" aria-hidden="true">🎧</span><div><b>You LISTEN.</b> Tell your partner what you hear.<br><span class="zh">你負責聽，把聽到的用英文告訴搭檔。不要給對方看畫面。</span></div></div>
+        <div class="player"><button class="bigplay" id="qplay" type="button" aria-label="Play">▶</button><div class="playnote">Play as many times as you need. 可以重複播放。</div></div>
+        <div class="chips"><span>I hear…</span><span>It is a verb / noun.</span><span>Beep! Beep!</span><span>Listen again.</span></div>
+        <button class="btn primary block" id="next" type="button">Next round ▶ 下一輪</button>${sync4}`;
+    }else{
+      const opts=shuffle([it.a].concat(it.d),rng(hashStr(p.g+'|'+p.role+'|'+p.n)));
+      body=`${head}
+        <div class="who"><span class="e" aria-hidden="true">🗣️</span><div><b>You CHOOSE.</b> Ask your partner. Choose the hidden word.<br><span class="zh">你負責選，問搭檔聽到了什麼，選出被「嗶」蓋住的字。</span></div></div>
+        <div class="chips"><span>Please say it again.</span><span>What does it mean?</span><span>Is it a verb?</span><span>What is the sentence?</span></div>
+        <div id="opts">${opts.map(o=>`<button class="opt" type="button" data-o="${esc(o)}">${esc(o)}<small>${esc(ZH4[o]||'')}</small></button>`).join('')}</div>
+        <div class="feed" id="feed"></div>
+        <button class="btn primary block" id="next" type="button" hidden style="margin-top:10px">Next round ▶ 下一輪</button>${sync4}`;
+    }
+    $('#stage').innerHTML=`<div class="card" id="qcard">${body}</div>`;
+    if(iListen)wirePlay($('#qplay'),()=>seq(it.s,'kid').concat([{gapOnly:900}],seq(it.s,'kid')));
+    $('#next').onclick=()=>{sync();if(!iListen&&!S.pair.res)return;TTS.stop();S.pair.n++;S.pair.res=null;save();play();};
+    $('#rgo').onclick=()=>{const v=parseInt($('#rn').value,10);if(!(v>=1))return;sync();S.pair.n=v-1;S.pair.res=null;save();play();};
+    $('#chg').onclick=()=>{sync();S.pair=null;save();setup();};
+    if(!iListen){
+      const lock=(res)=>{ // show the result of this round again after a refresh
+        $$('.opt').forEach(o=>{o.disabled=true;});
+        const feed=$('#feed');
+        if(res==='ok'){$$('.opt').forEach(o=>{if(o.dataset.o===it.a)o.classList.add('ok');});feed.className='feed good';feed.innerHTML='✔ '+esc(it.a)+'<br><span class="note">'+esc(it.f)+'</span>';}
+        else{feed.className='feed nope';feed.textContent='✘ Not right. Talk with your partner. 答錯了，和搭檔討論一下。';}
+        $('#next').hidden=false;
+      };
+      if(p.res)lock(p.res);
+      $$('.opt').forEach(b=>b.onclick=()=>{
+        sync();if(S.lockUntil>Date.now()||S.pair.res)return;
+        const good=b.dataset.o===it.a;
+        if(good){
+          b.classList.add('ok');SFX.ding();S.pair.ok++;S.pair.res='ok';save();
+          lock('ok');
+          if(TTS.ok)TTS.later(()=>TTS.play([{t:it.a,p:1,r:.8}]),350);
+          if(S.pair.ok>=NEED4&&!S.done[st.key])finishStation(st,'Letter for fuse 4');
+        }else{
+          b.classList.add('bad');S.pair.res='bad';save();
+          wrongHit(st.key);lock('bad');b.classList.add('bad');shake($('#qcard'));
+        }
+      });
+    }
+  }
+  if(showIfDone(st)){}
+  if(!P()||!P().g)setup();else play();
+  wireCommon('s4',()=>{
+    const p=P();if(!p)return false;
+    if(p.res){setMsg('This round is over. 這一輪已結束。','info');return false;}
+    const it=p4item(p.g,p.n),roles=ROLES.slice(0,p.size),iListen=p.role===roles[p.n%p.size];
+    if(iListen){
+      if(hs===0){showHint('<b>Text 文字：</b>'+esc(it.s.replace('(beep)','_____')));hs=1;return true;}
+      if(hs===1){showHint('<b>Text 文字：</b>'+esc(it.s.replace('(beep)','_____'))+'<br><b>中文：</b>'+esc(it.zh));hs=2;return true;}
+    }else{
+      const wrongs=$$('.opt').filter(o=>o.dataset.o!==it.a&&!o.classList.contains('struck'));
+      if(hs<2&&wrongs.length>1){wrongs[0].classList.add('struck');wrongs[0].disabled=true;hs++;showHint('One wrong choice is crossed out. 已劃掉一個錯誤選項。');return true;}
+    }
+    setMsg('No more help for this round. 這一輪沒有更多提示了。','info');return false;
+  });
+}
+
+/* ---------- Station 5: Granny's Radio (long listening) ---------- */
+function renderS5(st){
+  const STORY=['Long ago, in the countryside, people had a ban-doh for a big event.','The whole neighborhood worked together.','The host prepared the food.','The neighbors helped to cook, and they brought tables, chairs and bowls.','At night, the host handed out torches.','The guests took bags of leftovers home.','Today, some things have changed, but the spirit of ban-doh remains.','People still gather to have fun together.'];
+  const ZHS=['很久以前，在鄉下，人們為了大事舉辦辦桌。','整個社區一起合作。','主人準備食物。','鄰居幫忙煮菜，還帶來桌子、椅子和碗。','晚上，主人分發火把。','客人把一袋袋剩菜帶回家。','今天，有些事情改變了，但辦桌的精神依然存在。','人們仍然聚在一起享受歡樂。'];
+  const Q=[
+    {q:'Where did ban-doh start?',a:'In the countryside',d:['In a big city','In a school','In a supermarket'],src:STORY[0],zh:ZHS[0]},
+    {q:'Who prepared the food?',a:'The host',d:['The guests','The pedestrians','The assistants'],src:STORY[2],zh:ZHS[2]},
+    {q:'What did the neighbors bring?',a:'Tables, chairs and bowls',d:['Torches and candy','Cars and buses','Masks and costumes'],src:STORY[3],zh:ZHS[3]},
+    {q:'What did the host hand out at night?',a:'Torches',d:['Candy','Tickets','Bowls'],src:STORY[4],zh:ZHS[4]},
+    {q:'What did the guests take home?',a:'Bags of leftovers',d:['The tent','The chairs','The cooks'],src:STORY[5],zh:ZHS[5]},
+    {q:'What still remains today?',a:'The spirit of gathering together',d:['The old torches','The big tent','Nothing'],src:STORY[6]+' '+STORY[7],zh:ZHS[6]+ZHS[7]}
+  ];
+  $('#view').innerHTML=frame(st,
+    `<p>You are listening to <b>Granny Ghost's radio</b>. She tells the story of the very first ban-doh. <b>Listen to the story. Then answer 6 questions.</b></p><p class="zh">鬼阿嬤的電台正在講最早的辦桌故事。先聽故事，再回答 6 個問題。</p>`,
+    `先按 ▶ 聽鬼阿嬤的故事（可重複播放），聽完才會出現問題。問題會顯示文字，但<b>故事不會顯示</b>。每題 4 個選項，選了就送出。<br>答錯扣 1 格電，這題等一下會再出現；電量用完要等 30 秒。提示：第 1 次看故事中相關的一句英文，第 2 次再加中文。`,'');
+  if(showIfDone(st)){$('#stage').innerHTML='<div class="msg info">This fuse is fixed. 這一站已完成。</div>';wireCommon('s5');return;}
+  $('#stage').innerHTML=`<div class="card player" id="storycard"><h3>📻 Granny's story</h3>
+    <button class="bigplay" id="splay" type="button" aria-label="Play the story">▶</button>
+    <div class="playnote">Play the whole story. The questions open when the story ends. 要把整段故事聽完，問題才會打開。</div>
+    <button class="btn primary block" id="startq" type="button" style="margin-top:12px" disabled>🔒 Questions 問題（Listen first 先聽故事）</button></div>
+`;
+  const items=[];STORY.forEach(s=>{seq(s,'granny').forEach(x=>items.push(x));});
+  const sp=$('#splay');
+  // the questions open only after the whole story has been played to the end once
+  wirePlay(sp,()=>items,{gap:600,onDone:()=>{$('#startq').disabled=false;$('#startq').textContent='I am ready 我聽完了 → Questions 問題';}});
+  if(!TTS.ok)$('#startq').disabled=false;
+  let hint=null;
+  $('#startq').onclick=()=>{
+    TTS.stop();$('#storycard').hidden=true;
+    // runQuiz draws into #stage, so give it its own container
+    $('#stage').innerHTML='<div id="qmount"></div><div class="card"><button class="btn block" id="replay" type="button">📻 Play the story again 再聽一次故事</button></div>';
+    wirePlay($('#replay'),()=>items,{gap:600});
+    hint=runQuiz(st,{
+      mount:'#qmount',items:Q,label:'Question',playNote:'Read the question. Choose. 讀題目，選答案。',showQ:true,sayAnswer:false,
+      decoys:it=>it.d,
+      audio:it=>seq(it.q,'lantern'),line:'Letter for fuse 5'
+    });
+  };
+  wireCommon('s5',()=>hint?hint():(setMsg('Listen to the story first. 先聽故事。','info'),false));
+}
+
+/* ---------- The Main Switch + receipt ---------- */
 function renderFinal(){
   if(S.endTs)return renderReceipt();
   const missing=STATIONS.filter(s=>!S.done[s.key]).map(s=>s.id);
-  const chart=Array.from({length:26},(_,i)=>`<div><b>${String.fromCharCode(65+i)}</b>${i+1}</div>`).join('');
-  const tiles=STATIONS.map(st=>{const d=S.done[st.key];return `<div class="lock${d?' on':''}"><small>Lock ${st.id}</small><b>${d?esc(d.sym):'?'}</b></div>`;}).join('');
+  const tiles=STATIONS.map(st=>{const d=S.done[st.key];return `<div class="lock${d?' on':''}"><small>Fuse ${st.id}</small><b>${d?esc(d.sym):'?'}</b></div>`;}).join('');
   $('#view').innerHTML=`
   <a class="back" href="#home">← Menu 選單</a>
-  <div class="st-head"><div class="st-emoji" aria-hidden="true">🪄</div><div><div class="kick">Final</div><h1>The Final Lock</h1><div class="zh">咒語</div></div></div>
-  <div class="story"><p>Put your 6 magic symbols in the right locks. Say the spell to Dracula!</p>
-    <p class="zh">把 6 個魔法符號放進正確的格子。數字要先換成字母。</p></div>
+  <div class="st-head"><div class="st-emoji" aria-hidden="true">🔦</div><div><div class="kick">Final</div><h1>The Main Switch</h1><div class="zh">總開關</div></div></div>
+  <div class="story"><p>Connect the 5 wires in the right order. Then the lights come on!</p>
+    <p class="zh">按照下面的接線順序，把 5 個字母填進去，就能讓燈亮起來。</p></div>
   <button class="linkbtn" id="zhbtn" type="button" aria-expanded="false">🇹🇼 中文說明（免費）</button>
-  <div class="zhbox" id="zhbox" hidden>把 6 個魔法符號放進對應的鎖。第 1、6 個是數字，要用 A=1、B=2、C=3… 換成字母。六個字母連起來就是咒語，說給 Dracula 聽，把他叫醒。</div>
-  ${missing.length?`<div class="msg info">You have not finished Station ${missing.join(', ')}. Your receipt will show this. 你還沒完成第 ${missing.join('、')} 站，收據上會顯示。</div>`:''}
-  <div class="card"><h3>Your symbols 你的符號</h3><div class="locks">${tiles}</div></div>
-  <div class="card"><h3>Number → letter chart 數字換字母</h3><div class="chart">${chart}</div></div>
-  <div class="card"><h3>The 6 locks 六個鎖</h3>
-    <div class="lockin">${[1,2,3,4,5,6].map(n=>`<div><label for="l${n}">Lock ${n}</label><input id="l${n}" type="text" maxlength="2" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Lock ${n}"></div>`).join('')}</div>
-    <button class="btn primary block" id="check" type="button" style="margin-top:12px">Say the spell 🪄</button></div>
+  <div class="zhbox" id="zhbox" hidden>第 1 條線接「保險絲 ${WIRE[0]}」的字母，第 2 條線接「保險絲 ${WIRE[1]}」……依此類推。5 個字母連起來是一個英文單字，也是你想對燈籠伯說的話。</div>
+  ${missing.length?`<div class="msg info">You have not fixed fuse ${missing.join(', ')}. Your receipt will show this. 你還沒完成第 ${missing.join('、')} 站，收據上會顯示。</div>`:''}
+  <div class="card"><h3>Your fuse letters 你的字母</h3><div class="locks">${tiles}</div></div>
+  <div class="card"><h3>Wire order 接線順序</h3>
+    <div class="wire">${WIRE.map((f,i)=>`<div>Wire ${i+1}<b>← Fuse ${f}</b></div>`).join('')}</div></div>
+  <div class="card"><h3>Connect the wires 接線</h3>
+    <div class="lockin">${WIRE.map((f,i)=>`<div><label for="l${i}">Wire ${i+1}</label><input id="l${i}" type="text" maxlength="1" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Wire ${i+1}"></div>`).join('')}</div>
+    <button class="btn primary block" id="check" type="button" style="margin-top:12px">Switch ON 🔦</button></div>
   <div class="msg" id="msg" role="status"></div>
   <div id="hintbox"></div><button class="btn ghost block" id="hintbtn" type="button"></button>`;
-  const inputs=[1,2,3,4,5,6].map(n=>$('#l'+n));
+  const inputs=WIRE.map((_,i)=>$('#l'+i));
   inputs.forEach((inp,i)=>{
-    inp.addEventListener('input',()=>{inp.classList.remove('bad','ok');const v=inp.value.replace(/[^a-z0-9]/gi,'');inp.value=v.toUpperCase();if(v.length>=1&&/[a-z]/i.test(v)&&inputs[i+1])inputs[i+1].focus();});
+    inp.addEventListener('input',()=>{inp.classList.remove('bad','ok');const v=inp.value.replace(/[^a-z]/gi,'');inp.value=v.toUpperCase();if(v&&inputs[i+1])inputs[i+1].focus();});
     onEnter(inp,()=>$('#check').click());
   });
   $('#check').onclick=()=>{
     const vals=inputs.map(i=>i.value.trim().toUpperCase());
-    if(vals.some(v=>!v)){setMsg('Fill in all 6 locks. 六個格子都要填。');return;}
+    if(vals.some(v=>!v)){setMsg('Fill in all 5 wires. 五條線都要填。');return;}
     const bad=[];
     vals.forEach((v,i)=>{const good=v===SECRET[i];inputs[i].classList.remove('ok','bad');inputs[i].classList.add(good?'ok':'bad');if(!good)bad.push(i+1);});
     if(bad.length){
-      const digit=vals.findIndex(v=>/\d/.test(v));
-      setMsg(digit>=0?'Lock '+(digit+1)+' needs a LETTER. Use the chart: A=1, B=2... 要填字母，用上面的表換。':'Lock '+bad.join(', ')+(bad.length>1?' are':' is')+' not right. Check that station again. 再檢查那一站。');
+      SFX.buzz();zap();
+      setMsg('Wire '+bad.join(', ')+(bad.length>1?' are':' is')+' not right. Check the fuse letters and the wire order. 檢查字母和接線順序。');
       shake($('.lockin'));return;
     }
-    sync();S.endTs=Date.now();S.finalMs=S.endTs-S.startTs+hintsTotal()*PEN;save();tick();TTS.stop();renderReceipt(true);
+    sync();S.endTs=Date.now();S.finalMs=S.endTs-S.startTs+hintsTotal()*PEN;save();tick();TTS.stop();SFX.fanfare();renderReceipt(true);
   };
-  wireCommon('final',[
-    'Use the chart. A=1, B=2, C=3 ... 用上面的對照表。',
-    'Lock 1 and Lock 6 are numbers. Turn them into letters. 第 1 和第 6 個鎖是數字，要換成字母。',
-    'The spell is what you say to Dracula: “Wake ___!” 咒語是你對 Dracula 說的話：Wake ___！'
-  ]);
+  wireCommon('final',()=>{
+    const n=S.hints.final||0;
+    if(n===0)showHint('Look at <b>Wire order</b>. Wire 1 takes the letter from Fuse '+WIRE[0]+'. 看「接線順序」，第 1 條線用保險絲 '+WIRE[0]+' 的字母。');
+    else if(n===1)showHint('Wire 1 = '+symOf(WIRE[0])+'. Wire 2 takes the letter from Fuse '+WIRE[1]+'. 第 1 條線是 '+symOf(WIRE[0])+'。');
+    else showHint('The first two letters are <b>'+symOf(WIRE[0])+symOf(WIRE[1])+'</b>. 前兩個字母是 '+symOf(WIRE[0])+symOf(WIRE[1])+'。');
+    return true;
+  });
 }
 function renderReceipt(){
-  const rows=STATIONS.map(st=>{const d=S.done[st.key];return `<div class="row"><span>${d?'[x]':'[ ]'} ${esc(st.title)}</span><b>${d?fmt(d.t):'not done'}</b></div>`;}).join('');
+  const rows=STATIONS.map(st=>{const d=S.done[st.key];const w=S.wrong[st.key]||0;return `<div class="row"><span>${d?'[x]':'[ ]'} ${st.id}. ${esc(st.title)}</span><b>${d?fmt(d.t):'not done'}${d&&w?' ·✘'+w:''}</b></div>`;}).join('');
   const raw=S.endTs-S.startTs,pen=hintsTotal()*PEN;
   $('#view').innerHTML=`
   <a class="back" href="#home">← Menu 選單</a>
   <div class="msg info">📸 Take a screenshot of this receipt and show your teacher. 請截圖這張收據給老師看。</div>
   <div class="receipt" id="receipt">
-    <h2>Wake Up, Dracula!</h2><div class="c">DRACULA WOKE UP ON TIME!</div><hr>
+    <h2>Ghost Ban-doh: Lights Out!</h2><div class="c">THE LIGHTS ARE ON!</div><div class="lamps" aria-hidden="true">🏮🏮🏮🏮🏮</div><hr>
     <div class="name">${esc(S.name)}${S.seat?' (#'+esc(S.seat)+')':''}</div>
     ${S.grp?`<div class="c">Group ${esc(S.grp)}</div>`:''}
     <div class="spell">${SECRET}</div><hr>
@@ -764,7 +1063,8 @@ function renderReceipt(){
     <div class="row"><span>Time</span><b>${fmt(raw)}</b></div>
     <div class="row"><span>Hint penalty</span><b>+${fmt(pen)}</b></div>
     <div class="row"><span>Total time</span><b>${fmt(S.finalMs)}</b></div>
-    <div class="row"><span>Hints used</span><b>${hintsTotal()}</b></div><hr>
+    <div class="row"><span>Hints used</span><b>${hintsTotal()}</b></div>
+    <div class="row"><span>Wrong answers</span><b>${wrongTotal()}</b></div><hr>
     ${rows}<hr>
     <div class="c">Thank you! Happy Halloween 🎃</div>
   </div>`;
@@ -777,14 +1077,16 @@ function route(){
   const h=(location.hash||'#home').slice(1);
   window.scrollTo(0,0);
   tick();
+  showLock();
   if(!S.startTs)return renderStart(h);
   if(h==='final')return renderFinal();
-  const fn={s1:renderS1,s2:renderS2,s3:renderS3,s4:renderS4,s5:renderS5,s6:renderS6}[h];
+  const fn={s1:renderS1,s2:renderS2,s3:renderS3,s4:renderS4,s5:renderS5}[h];
   const st=STATIONS.find(s=>s.key===h);
   if(fn&&st)return fn(st);
   renderHome();
 }
 window.addEventListener('hashchange',route);
+wireSfxBtn();
 route();
 })();
 </script>

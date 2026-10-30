@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Station cards – Wake Up, Dracula!</title>
+<title>Station cards – Ghost Ban-doh</title>
 <style>
-:root{--plum:#19255c;--pumpkin:#ffcf4a;--custard:#fff0b8;--ink:#0e1536}
+:root{--plum:#26163f;--pumpkin:#ffb347;--custard:#fff0b8;--ink:#160d24}
 *{box-sizing:border-box}
-body{margin:0;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#eef0fb;line-height:1.45}
+body{margin:0;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#f4eefb;line-height:1.45}
 .controls{max-width:820px;margin:0 auto;padding:20px 16px}
 .controls h1{margin:0 0 6px;font-size:1.4rem}
 .controls ol{margin:8px 0 14px;padding-left:1.3em}
@@ -51,7 +51,7 @@ body{margin:0;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",syst
     <li>Press Print. Choose <b>A4</b>, scale <b>100%</b>, and turn on <b>Background graphics</b>. 按列印，選 A4、縮放 100%，並勾選「背景圖形」。</li>
   </ol>
   <label for="base">Web address of the game 遊戲網址</label>
-  <input id="base" type="url" inputmode="url" autocomplete="off" placeholder="https://yourname.github.io/b1l4/">
+  <input id="base" type="url" inputmode="url" autocomplete="off" placeholder="https://yourname.github.io/b3l4/">
   <div class="warn" id="warn"></div>
   <div class="row"><button class="btn" id="print" type="button">🖨️ Print / Save as PDF 列印</button><span id="count"></span></div>
 </section>
@@ -319,22 +319,20 @@ body{margin:0;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",syst
 (function(){
 'use strict';
 var CARDS=[
-  {key:'home',tag:'Start here',emoji:'🧛',title:'Wake Up, Dracula!',zh:'出發！輸入姓名，開始計時',
-   what:'Enter your name. The timer starts. Then go to any station.',whatzh:'輸入姓名後開始計時，再前往任一站。',tips:['🎧 Use earphones 戴耳機','Each hint +10 sec 提示 +10 秒']},
-  {key:'s1',tag:'Station 1',emoji:'⏰',title:'Snooze Math',zh:'貪睡數學',
-   what:'Listen. How many minutes late is each one?',whatzh:'聽一聽，每個人睡過頭幾分鐘？',tips:['🎧 Earphones 戴耳機','Magic number → Lock 1']},
-  {key:'s2',tag:'Station 2',emoji:'📖',title:'Spell Book',zh:'拼字咒語（紙本）',
-   what:'Listen. Write the words on your paper sheet. Take the first letters.',whatzh:'聽單字，寫在紙本聽寫單上，取第一個字母。',tips:['🎧 Earphones 戴耳機','📝 Paper sheet 聽寫單','Magic letter → Lock 2']},
-  {key:'s3',tag:'Station 3',emoji:'🔐',title:'Phrase Lock',zh:'片語鎖',
-   what:'Put the right phrase in each sentence.',whatzh:'每句話填入正確的片語。',tips:['Magic letter → Lock 3']},
-  {key:'s4',tag:'Station 4',emoji:'👻',title:'Who Am I?',zh:'定義謎語',
-   what:'Read the riddles. Choose the right words.',whatzh:'讀謎語，選出正確的單字。',tips:['Magic letter → Lock 4']},
-  {key:'s5',tag:'Station 5',emoji:'🧪',title:'Word Family Cauldron',zh:'字族鍋',
-   what:'Choose the right word form for each sentence.',whatzh:'選出正確的詞性。',tips:['Magic letter → Lock 5']},
-  {key:'s6',tag:'Station 6',emoji:'🕰️',title:'Tocky or Ramos?',zh:'閱讀理解',
-   what:'Read the sentences. Which clock is it?',whatzh:'讀句子，判斷是哪一個鬧鐘。',tips:['Magic number → Lock 6']},
-  {key:'final',tag:'The Final Lock',emoji:'🪄',title:'Say the spell',zh:'咒語',
-   what:'Bring your 6 magic symbols. Turn numbers into letters. Wake Dracula up!',whatzh:'帶著 6 個魔法符號，數字換成字母，把 Dracula 叫醒！',tips:['A=1, B=2, C=3 ...']}
+  {key:'home',tag:'Start here',emoji:'🏮',title:'Ghost Ban-doh: Lights Out!',zh:'出發！輸入姓名，開始計時',
+   what:'Enter your name. The timer starts. Then go to any fuse box.',whatzh:'輸入姓名後開始計時，再前往任一站。',tips:['🎧 Earphones 戴耳機','🔔 Silent mode OFF 關閉靜音','Each hint +10 sec 提示 +10 秒']},
+  {key:'s1',tag:'Fuse box 1',emoji:'📞',title:'Ghost Hotline',zh:'鬼打電話',
+   what:'Listen to the meaning. Choose the word.',whatzh:'聽英文說明，選出單字。',tips:['🎧 Earphones 戴耳機','Wrong = lose ⚡ 答錯扣電','Fixed → a letter 得到字母']},
+  {key:'s2',tag:'Fuse box 2',emoji:'🔌',title:'Wire Repair',zh:'接線聽寫',
+   what:'A beep hides one word. Listen. Fill in the missing letters.',whatzh:'「嗶」蓋住一個字，聽句子，把缺的字母補上。',tips:['🎧 Earphones 戴耳機','Wrong = lose ⚡ 答錯扣電','Fixed → a letter 得到字母']},
+  {key:'s3',tag:'Fuse box 3',emoji:'🏮',title:'Tent Crew',zh:'帳篷工班',
+   what:'Listen to the work order. Put the 5 cards in order.',whatzh:'聽工作流程，把 5 張卡片排成正確順序。',tips:['🎧 Earphones 戴耳機','2 rounds 共 2 回合','Fixed → a letter 得到字母']},
+  {key:'s4',tag:'Fuse box 4',emoji:'📟',title:'Walkie-Talkie',zh:'雙人對講機',
+   what:'Work in your team (2 or 3 people). One listens. The others choose. Keep the code the same.',whatzh:'小組一起完成（2～3 人）。一人聽、其他人選，兩邊代碼要一樣。',tips:['👥 Team together 全組一起','Group number + letter 組號＋字母','Fixed → a letter 得到字母']},
+  {key:'s5',tag:'Fuse box 5',emoji:'📻',title:"Granny's Radio",zh:'鬼阿嬤電台',
+   what:"Listen to Granny's story. Then answer 6 questions.",whatzh:'聽鬼阿嬤的故事，回答 6 個問題。',tips:['🎧 Earphones 戴耳機','Wrong = lose ⚡ 答錯扣電','Fixed → a letter 得到字母']},
+  {key:'final',tag:'The Main Switch',emoji:'🔦',title:'Switch the lights ON',zh:'總開關',
+   what:'Bring your 5 fuse letters. Follow the wire order. Light up the tent!',whatzh:'帶著 5 個字母，照接線順序填入，讓帳篷亮起來！',tips:['Follow the wire order 照接線順序']}
 ];
 var $=function(s){return document.querySelector(s)};
 var input=$('#base'),pages=$('#pages'),warn=$('#warn');
@@ -350,7 +348,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp
 
 function render(){
   var base=normalize(input.value);
-  try{localStorage.setItem('b1l4-escape.cardsBase',input.value)}catch(e){}
+  try{localStorage.setItem('b3l4-lights.cardsBase',input.value)}catch(e){}
   warn.className='warn';warn.textContent='';
   if(!base){pages.innerHTML='';$('#count').textContent='';return;}
   var msg=[];
@@ -371,7 +369,7 @@ function render(){
     $('#count').textContent=CARDS.length+' cards, 2 per page 共 '+CARDS.length+' 張（每頁 2 張）';
   }catch(err){pages.innerHTML='';warn.className='warn on';warn.textContent=err.message;}
 }
-var saved='';try{saved=localStorage.getItem('b1l4-escape.cardsBase')||''}catch(e){}
+var saved='';try{saved=localStorage.getItem('b3l4-lights.cardsBase')||''}catch(e){}
 if(/^https?:$/.test(location.protocol)&&!/^(localhost|127\.)/.test(location.hostname))input.value=normalize(location.href);
 else input.value=saved;
 input.addEventListener('input',render);
